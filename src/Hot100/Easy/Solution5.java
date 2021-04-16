@@ -24,3 +24,24 @@ public class Solution5 {
         }
 
 }
+/*
+* class Solution {
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        int n = nums.length;
+        int x;//元素应该映射到的哈希表的 key
+
+        for(int i =0 ;i<nums.length;i++){
+            x = (Math.abs(nums[i])-1)%n;
+            if(nums[x]>=0)  nums[x] = nums[x]*(-1) ;
+
+        }
+
+        List<Integer> vanishNum = new ArrayList<>();
+        for(int i=0;i<nums.length;i++){
+            if(nums[i] >=0 ) vanishNum.add(i+1);
+            else nums[i] *= (-1); //还原nums[]
+        }
+        return vanishNum;
+
+    }
+}*/
