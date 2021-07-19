@@ -19,14 +19,27 @@ public class TestCashUse {
         sortMethod.quickSort(test,0,test.length-1);
         System.out.println(Arrays.toString(test));*/
         //
-        List<String>[] dp = new ArrayList[3];
+        /*List<String>[] dp = new ArrayList[3];
         System.out.println("test:");
         //dp[2].add("ssss");
         List<String> li = new ArrayList<>();
         li.add("sss");
         dp[2] = li;
         dp[2].add("xxxx");
-        System.out.println(Arrays.toString(dp[2].toArray()));
+        System.out.println(Arrays.toString(dp[2].toArray()));*/
+        List<Integer> l1 = new ArrayList<>();
+        l1.add(2);
+        l1.add(2);
+        l1.add(3);
+        l1.add(5);
+        System.out.println(Arrays.toString(l1.toArray()));
+        List<List<Integer>> l2 = new ArrayList<>();
+        l2.add(l1);
+        l2.add(l1);
+        System.out.println(Arrays.toString(l2.toArray()));
+        //l1.remove(new Integer(3));
+        l1.remove(2);
+        System.out.println(Arrays.toString(l2.toArray()));
 
     }
 }
