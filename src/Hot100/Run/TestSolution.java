@@ -3,6 +3,9 @@ package Hot100.Run;
 import Hot100.Easy.ListNode;
 import Hot100.Medium.SolutionTowNumSumInList;
 
+import java.util.Arrays;
+import java.util.stream.StreamSupport;
+
 public class TestSolution {
     public static void main(String args[]){
         /*ListNode L11 = new ListNode(2);
@@ -36,7 +39,7 @@ public class TestSolution {
         System.out.println("see L210");
         L21.traverListRightHere();
         System.out.println();
-*/
+*//*
         ListNode L17 = new ListNode(9);
         ListNode L16 = new ListNode(9,L17);
         ListNode L15 = new ListNode(9,L16);
@@ -53,7 +56,17 @@ public class TestSolution {
 
         SolutionTowNumSumInList so1 = new SolutionTowNumSumInList();
         ListNode ans =  so1.addTwoNumbers(L11,L21);
-        ans.traverListRightHere();
+        ans.traverListRightHere();*/
+
+        String path = "/home//tes";
+        String[] res = path.split("/");
+        System.out.println(Arrays.toString(res));
+        String s1 = "";
+        String s2 = "";
+        if(s1 == s2) System.out.println("equal");
+
+        if(s1== new String("")) System.out.println("equal2");
+
         return;
 
     }
