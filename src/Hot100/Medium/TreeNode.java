@@ -1,9 +1,4 @@
-package Hot100.Easy;
-
-import sun.reflect.generics.tree.Tree;
-
-import java.util.LinkedList;
-import java.util.Queue;
+package Hot100.Medium;
 
 //Definition for a binary tree node.
 public class TreeNode {

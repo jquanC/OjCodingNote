@@ -1,73 +1,165 @@
-package Hot100.Run;
+package Hot1000.Run;
 
-import Hot100.Easy.ListNode;
-import Hot100.Medium.SolutionTowNumSumInList;
+import Others.RSAKeyPairGenerator;
 
-import java.util.Arrays;
-import java.util.stream.StreamSupport;
+import javax.print.attribute.standard.PrinterMakeAndModel;
+import java.io.*;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Random;
 
 public class TestSolution {
-    public static void main(String args[]){
-        /*ListNode L11 = new ListNode(2);
-        ListNode L12 = new ListNode(4);
-        ListNode L13 = new ListNode(3);
-        L11.next = L12;
-        L12.next = L13;
+    public static void main(String args[]) throws IOException, NoSuchAlgorithmException {
 
-        ListNode L21 = new ListNode(5);
-        ListNode L22 = new ListNode(6);
-        ListNode L23 = new ListNode(4);
-        L21.next = L22;
-        L22.next = L23;*/
-        //----------
-       /* ListNode L11 = new ListNode(0);
-        ListNode L21 = new ListNode(1);*/
-        //----
-       /* ListNode L11 = new ListNode(9);
+       /* String testSpeed = new String("E:\\Gitfolder\\TestData\\testSpeed.txt");
+        DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(testSpeed)));
 
-        ListNode L210 = new ListNode(9);
-        ListNode L29 = new ListNode(9,L210);
-        ListNode L28 = new ListNode(9,L29);
-        ListNode L27 = new ListNode(9,L28);
-        ListNode L26 = new ListNode(9,L27);
-        ListNode L25 = new ListNode(9,L26);
-        ListNode L24 = new ListNode(9,L25);
-        ListNode L23 = new ListNode(9,L24);
-        ListNode L22 = new ListNode(9,L23);
-        ListNode L21 = new ListNode(1,L22);
-
-        System.out.println("see L210");
-        L21.traverListRightHere();
-        System.out.println();
-*//*
-        ListNode L17 = new ListNode(9);
-        ListNode L16 = new ListNode(9,L17);
-        ListNode L15 = new ListNode(9,L16);
-        ListNode L14 = new ListNode(9,L15);
-        ListNode L13 = new ListNode(9,L14);
-        ListNode L12 = new ListNode(9,L13);
-        ListNode L11 = new ListNode(9,L12);
-
-        ListNode L24 = new ListNode(9);
-        ListNode L23 = new ListNode(9,L24);
-        ListNode L22 = new ListNode(9,L23);
-        ListNode L21 = new ListNode(9,L22);
+        int L = 1000;
+        System.out.println(L);
+        int[][] indices = new int[L][16];
+        Random random = new Random();
 
 
-        SolutionTowNumSumInList so1 = new SolutionTowNumSumInList();
-        ListNode ans =  so1.addTwoNumbers(L11,L21);
-        ans.traverListRightHere();*/
+        for (int i = 0; i < L; i++) {
+            for (int j = 0; j < 16; j++) {
+                indices[i][j] = random.nextInt(100000000);
+                dout.writeInt(indices[i][j]);
+            }
+        }
+        dout.close();
 
-        String path = "/home//tes";
-        String[] res = path.split("/");
-        System.out.println(Arrays.toString(res));
-        String s1 = "";
-        String s2 = "";
-        if(s1 == s2) System.out.println("equal");
 
-        if(s1== new String("")) System.out.println("equal2");
+        DataInputStream din = new DataInputStream(new BufferedInputStream(
+                new FileInputStream(testSpeed)));
 
-        return;
+        int[][] readIndices = new int[L + 1][16];
+        int readCount = 0;
+        int readIntNum = din.available() / 4;
+        System.out.println("available=" + readIntNum);
+        try {
+            for (int i = 0; i < 102; i++) {
+                for (int j = 0; j < 16; j++) {
+                    if (readCount < readIntNum) {
+                        readIndices[i][j] = din.readInt();
+                        readCount++;
+                    }
+
+                }
+            }
+
+        } catch (EOFException e) {
+            System.out.println("readCount= " + readCount);
+
+        }
+
+        System.out.println("---");*/
+        //-------------
+       /* List<Integer> res = new ArrayList<Integer>() {{ add(0); add(1);}};
+        System.out.println(res.toString());
+
+*/
+        /*System.out.println(1<<10);
+        byte [][] testMaxArr = new byte[1<<29][1<<4];*/
+
+        BigInteger multi1000 = BigInteger.ONE;
+        for (int i = 0; i < 1000; i++) {
+            multi1000 = multi1000.add(BigInteger.ONE);
+        }
+
+
+        byte[][] genBigNum1 = new byte[1000][384];
+        byte[][] genBigNum2 = new byte[1000][384];
+        byte[][] genBigNum3 = new byte[1000][384];
+        BigInteger[] bigNumArr1 = new BigInteger[1000];
+        BigInteger[] bigNumArr2 = new BigInteger[1000];
+        BigInteger[] bigNumArr3 = new BigInteger[1000];
+        Random random1 = new Random();
+        Random random2 = new Random(111);
+
+        for (int i = 0; i < 1000; i++) {
+            random1.nextBytes(genBigNum1[i]);
+            bigNumArr1[i] = new BigInteger(genBigNum1[i]);
+
+            random2.nextBytes(genBigNum2[i]);
+            bigNumArr2[i] = new BigInteger(genBigNum2[i]);
+
+            bigNumArr3[i] = bigNumArr2[i].multiply(multi1000);
+        }
+
+        long[] start = new long[6];
+        long[] end = new long[6];
+        byte[] n = new byte[385];
+        random1.nextBytes(n);
+        BigInteger N = new BigInteger(n);
+        N = N.abs();
+        N = N.nextProbablePrime();
+        //test add
+        BigInteger add;
+        start[0] = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            add = bigNumArr1[i].add(bigNumArr2[i]);
+        }
+        end[0] = System.nanoTime();
+
+        //test multiple
+        BigInteger multi;
+        start[1] = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            multi = bigNumArr1[i].multiply(bigNumArr2[i]);
+        }
+        end[1] = System.nanoTime();
+
+        //test modPower 小
+        BigInteger modPow;
+        start[2] = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            //System.out.println(i);
+            modPow = bigNumArr1[i].modPow(bigNumArr2[i], N);
+        }
+        end[2] = System.nanoTime();
+
+        //test modPower 大
+        BigInteger modPowBig;
+        start[3] = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            modPowBig = bigNumArr1[i].modPow(bigNumArr3[i], N);
+        }
+        end[3] = System.nanoTime();
+
+        //test equal(actual equal)
+       boolean res;
+        start[4] = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            res = bigNumArr1[i].equals(bigNumArr1[i]);
+        }
+        end[4] = System.nanoTime();
+
+        //test equal(actual no equal)
+        boolean res2;
+        start[5] = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            res2 = bigNumArr1[i].equals(bigNumArr2[i]);
+        }
+        end[5] = System.nanoTime();
+
+        long[] resTime = new long[6];
+        for (int i = 0; i < 6; i++) {
+            resTime[i] = end[i] - start[i];
+        }
+
+
+
+
+        System.out.println("放大1000倍的差距：");
+        System.out.println(" test add= " + resTime[0]);
+        System.out.println(" test multi= " + resTime[1]);
+        System.out.println(" test modPower= " + resTime[2]);
+        System.out.println(" test modPower 大= " + resTime[3]);
+        System.out.println(" test equal == " + resTime[4]);
+        System.out.println(" test equal != " + resTime[5]);
 
     }
+
 }

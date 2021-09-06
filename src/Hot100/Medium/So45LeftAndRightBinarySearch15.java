@@ -1,6 +1,6 @@
 package Hot100.Medium;
 
-public class LeftAndRightBinarySearch15 {
+public class So45LeftAndRightBinarySearch15 {
     public int[] searchRange(int[] nums, int target) {
         int leftIndex = binaryLeftSearch(nums,target);
         int rightIndex = binaryRightSearch(nums,target);
