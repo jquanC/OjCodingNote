@@ -1,5 +1,6 @@
 package Hot100.Test;
 
+import Hot100.Medium.DP.NumSquares;
 import Hot100.Medium.ListNode;
 import Hot100.Medium.S052RobDP;
 import Hot100.Medium.So50SortedLinkedList;
@@ -29,6 +30,13 @@ public class TestOJ {
         int[]nums = new int[]{1,2,3,1};
         S052RobDP so52RobDP = new S052RobDP();
          int res = so52RobDP.rob(nums);
+        System.out.println(res);
+    }
+    @Test
+    public void testNumSquares(){
+        int n = 13;
+        NumSquares soNumSquare = new NumSquares();
+        int res = soNumSquare.numSquares(n);
         System.out.println(res);
     }
 }
