@@ -9,7 +9,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
-public class TestUsage {
+public class    TestUsage {
     public static void main(String args[]) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         //RSA key pair test
         RSAKeyPairGenerator rsa = new RSAKeyPairGenerator();
