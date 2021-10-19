@@ -39,4 +39,5 @@ public class TestOJ {
         int res = soNumSquare.numSquares(n);
         System.out.println(res);
     }
+
 }
