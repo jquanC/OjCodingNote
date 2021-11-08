@@ -7,9 +7,9 @@
 ````text
 用两个栈实现一个队列。队列的声明如下，请实现它的两个函数 appendTail 和 deleteHead ，分别完成在队列尾部插入整数和在队列头部删除整数的功能。(若队列中没有元素，deleteHead 操作返回 -1 )
 
- 
 
 示例 1：
+
 
 输入：
 ["CQueue","appendTail","deleteHead","deleteHead"]
@@ -927,3 +927,506 @@ public class minRotateArray {
 ### [剑指 Offer 50. 第一个只出现一次的字符](https://leetcode-cn.com/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
 
 - easy done
+
+
+
+## 树
+
+### [剑指 Offer 32 - I. 从上到下打印二叉树](https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-lcof/)
+
+- easy done
+
+### [剑指 Offer 32 - II. 从上到下打印二叉树 II](https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-ii-lcof/)
+
+- 要求按分层
+
+**思路**
+
+- 我的做法是插入一个标记结点.需要注意标记结点出栈判断栈空跳出循环的情况，避免死循环
+- 另外一种做法是for循环从高到低输出一层的节点数，也很巧妙
+
+````java
+ public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> resList = new ArrayList<>();
+        List<Integer> oneRowList = new ArrayList<>();
+
+        if (root == null) return resList;
+
+        Queue<TreeNode> que = new LinkedList();
+
+        que.offer(root);
+        que.offer(new TreeNode(Integer.MIN_VALUE));
+        while (!que.isEmpty()) {
+            TreeNode cur = que.poll();
+            if (cur.val == Integer.MIN_VALUE) {
+                resList.add(new ArrayList<>(oneRowList));
+                oneRowList.clear();
+
+                if(que.isEmpty()) break; //避免死循环
+                else que.offer(new TreeNode(Integer.MIN_VALUE));
+            } else {
+                oneRowList.add(cur.val);
+                if (cur.left != null) que.add(cur.left);
+                if (cur.right != null) que.add(cur.right);
+            }
+        }
+
+        return resList;
+    }
+
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        List<List<Integer>> res = new ArrayList<>();
+        if(root != null) queue.add(root);
+        while(!queue.isEmpty()) {
+            List<Integer> tmp = new ArrayList<>();
+            for(int i = queue.size(); i > 0; i--) {
+                TreeNode node = queue.poll();
+                tmp.add(node.val);
+                if(node.left != null) queue.add(node.left);
+                if(node.right != null) queue.add(node.right);
+            }
+            res.add(tmp);
+        }
+        return res;
+    }
+}
+
+作者：jyd
+链接：https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-ii-lcof/solution/mian-shi-ti-32-ii-cong-shang-dao-xia-da-yin-er-c-5/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+    
+    
+````
+
+
+
+### [剑指 Offer 32 - III. 从上到下打印二叉树 III](https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/)
+
+**思路**
+
+- 我的是用一个标志变量，不断变化插入顺序
+- 标志变量起判奇偶层的作用。判断奇偶层还有很多方法，比如$resList.size()%2==0?$
+- LinkedList 有addFirst 和 addLast 方法。当然用add(index,ele)也可以
+
+````java
+ public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> resList = new ArrayList<>();
+        List<Integer> oneRowList = new ArrayList<>();
+
+        if (root == null) return resList;
+
+        Queue<TreeNode> que = new LinkedList();
+        que.offer(root);
+
+        boolean leftOrRight = true;//左到右
+        while (!que.isEmpty()) {
+            for(int i=que.size();i>0;i--){
+                TreeNode cur = que.poll();
+                if(leftOrRight)  oneRowList.add(cur.val);
+                else oneRowList.add(0,cur.val);
+
+                if (cur.left != null) que.add(cur.left);
+                if (cur.right != null) que.add(cur.right);
+            }
+            leftOrRight = !leftOrRight;
+            resList.add(new ArrayList(oneRowList));
+            oneRowList.clear();
+        }
+
+        return resList;
+    }
+````
+
+### [剑指 Offer 26. 树的子结构](https://leetcode-cn.com/problems/shu-de-zi-jie-gou-lcof/)
+
+````text
+输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
+
+B是A的子结构， 即 A中有出现和B相同的结构和节点值。
+
+例如:
+给定的树 A:
+
+     3
+    / \
+   4   5
+  / \
+ 1   2
+给定的树 B：
+
+   4 
+  /
+ 1
+返回 true，因为 B 与 A 的一个子树拥有相同的结构和节点值。
+
+示例 1：
+
+输入：A = [1,2,3], B = [3,1]
+输出：false
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/shu-de-zi-jie-gou-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+**思路**
+
+- 遍历树判断就可以了
+  - 当前结点值不等，往下判断
+  - 当前节点值相等，定义一个相等判断函数
+- 注意空指针的情况，避免异常
+- 关于书中提示的，关于浮点值的判断，无法用==，因为double 和 float 都是有精度缺失。了解一下
+
+````java
+package SwordOf.Tree.order;
+
+import Hot100.Medium.TreeNode;
+import org.junit.Test;
+
+import javax.xml.bind.annotation.XmlInlineBinaryData;
+
+public class IsSubStructure {
+
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if(B == null || A == null) return false;
+
+        boolean result = false;
+        if(A.val == B.val){
+            result = isSameStructure(A,B);
+        }
+
+        return result||isSubStructure(A.left,B) || isSubStructure(A.right,B);
+
+    }
+    public boolean isSameStructure(TreeNode A,TreeNode B){
+        if(B == null) return true;
+        if(A == null) return false;
+        if(A.val!=B.val) return false;
+
+       return isSameStructure(A.left,B.left) && isSameStructure(A.right,B.right);
+
+    }
+    @Test
+    public void test(){
+        TreeNode A1 = new TreeNode(4);
+        TreeNode A2 = new TreeNode(2);
+        TreeNode A3 = new TreeNode(3);
+        TreeNode A4 = new TreeNode(4);
+        TreeNode A5 = new TreeNode(5);
+        TreeNode A6 = new TreeNode(6);
+        TreeNode A7 = new TreeNode(7);
+        TreeNode A8 = new TreeNode(8);
+        TreeNode A9 = new TreeNode(9);
+        A1.left = A2;
+        A1.right = A3;
+        A2.left= A4;
+        A2.right = A5;
+        A3.left = A6;
+        A3.right = A7;
+        A4.left = A8;
+        A4.right = A9;
+
+        TreeNode B1 = new TreeNode(4);
+        TreeNode B2 = new TreeNode(8);
+        TreeNode B3 = new TreeNode(9);
+        B1.left = B2;
+        B1.right = B3;
+
+        System.out.println(isSubStructure(A1,B1));
+
+    }
+}
+````
+
+### [剑指 Offer 28. 对称的二叉树](https://leetcode-cn.com/problems/dui-cheng-de-er-cha-shu-lcof/)
+
+请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+    1
+   / \
+  2   2
+   \   \
+   3    3
+
+**思路**
+
+- 递归的思想
+
+````java
+public TreeNode mirrorTree(TreeNode root) {
+        if(root == null) return null;
+        TreeNode mirrorRoot = new TreeNode(root.val);
+
+        if (root.left != null) mirrorRoot.right = mirrorTree(root.left);
+        if (root.right != null) mirrorRoot.left = mirrorTree(root.right);
+
+        return mirrorRoot;
+
+
+    }
+````
+
+
+
+## 动态规划
+
+### [剑指 Offer 10- I. 斐波那契数列](https://leetcode-cn.com/problems/fei-bo-na-qi-shu-lie-lcof/)
+
+**思路**
+
+- 递归$O(n)$记得保存搜索结果，否则会超时
+- 矩阵快速幂乘
+
+下面讲讲什么是矩阵幂乘，其实就是pow函数。**矩阵幂乘和两个数的幂乘算法 本质是一模一样的！** 将k次缩减为$O(logk)$次；
+
+<img src="mdPics/image-20211105103853721.png" alt="image-20211105103853721" style="zoom:50%;" />
+
+- 在知道了快速乘法之后，想要用其解决这道题，还有1个难点，就是知道其递推公式
+- <img src="mdPics/image-20211105104023250.png" alt="image-20211105104023250" style="zoom:50%;" />
+- 推导这个递推公式的思想：https://www.cnblogs.com/SYCstudio/p/7211050.html
+
+````java
+package SwordOf.dynamicPro;
+
+import org.junit.Test;
+
+import java.util.Arrays;
+
+public class FibFast {
+    int MOD = 1000000007;
+
+    public int fib(int n) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+
+        int[][] start = new int[][]{{1}, {0}};
+        int[][] matrix = new int[][]{{1, 1}, {1, 0}};
+        matrix = powMatrix(matrix, n - 1);
+        int[][] res = matrixMultiply(matrix, start);
+
+        return res[0][0];
+    }
+
+    //矩阵的幂乘
+    public int[][] powMatrix(int[][] A, int k) {
+
+        int[][] eachMultiply = A;
+        int[][] res = new int[A.length][A.length];
+        for (int i = 0; i < res.length; i++) res[i][i] = 1;
+
+        while (k > 0) {
+            if ((k & 1) == 1) {
+                res = matrixMultiply(res, eachMultiply);
+            }
+            eachMultiply = matrixMultiply(eachMultiply, eachMultiply);
+            k = k >> 1;
+        }
+        return res;
+    }
+
+
+    //两个矩阵相乘
+    /*A(m*n) , B(n*t)*/
+    public int[][] matrixMultiply(int[][] A, int[][] B) {
+        if (A.length == 0 || A == null || B.length == 0 || B.length == 0) return null;
+        if (A[0].length != B.length) return null;
+        int m = A.length;
+        int n = A[0].length;
+        int t = B[0].length;
+        int[][] res = new int[m][t];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < t; j++) {
+                int oneEle = 0;
+                for (int k = 0; k < n; k++) {
+                    oneEle += 1l*A[i][k] * B[k][j] % MOD;
+                }
+                res[i][j] = oneEle;
+            }
+        }
+        return res;
+    }
+
+    //两个数的快速幂乘算法
+    public long myPower(int x, long k) {
+        int check = 1;
+        int eachMultiply = x;
+        int res = 1;
+        while (k > 0) {
+            if ((k & check) == 1) {
+                res *= eachMultiply;
+            }
+            eachMultiply *= eachMultiply;
+            k = k >> 1;
+        }
+        return res;
+    }
+
+
+    @Test
+    public void test2(){
+        int res = fib(2);
+        System.out.println(res);
+    }
+
+    @Test
+    public void test() {
+        int mod1 = (int) 1e9;
+        double mod2 = 1e9;
+        System.out.println(mod1);
+        System.out.println(mod2);
+    }
+}
+
+````
+
+### [剑指 Offer 63. 股票的最大利润](https://leetcode-cn.com/problems/gu-piao-de-zui-da-li-run-lcof/)
+
+````text
+假设把某股票的价格按照时间先后顺序存储在数组中，请问买卖该股票一次可能获得的最大利润是多少？
+
+示例 1:
+
+输入: [7,1,5,3,6,4]
+输出: 5
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格。
+示例 2:
+
+输入: [7,6,4,3,1]
+输出: 0
+解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+ 
+````
+
+**思路及代码**
+
+````java
+package SwordOf.dynamicPro;
+
+
+/*动态规划：
+* max[i]：表示前[i]能得到的最大利润
+* minValue：表示前面股票出现的最低价格
+* 动态转移方程： max[i] = 今天价格-前面的最低价格 是否大于 前i-1可以求得的最大利润？ */
+public class MaxProfit {
+    public int maxProfit(int[] prices) {
+        if(prices.length ==0 || prices == null) return 0;
+
+        int[] max = new int[prices.length];
+        max[0]=0;
+        int minValue= prices[0];
+
+        for(int i=1;i<prices.length;i++){
+            if(prices[i]<minValue) minValue = prices[i];
+
+            max[i] = prices[i] - minValue > max[i-1] ? prices[i] - minValue : max[i-1];
+        }
+        return max[prices.length-1];
+    }
+}
+
+````
+
+### [剑指 Offer 42. 连续子数组的最大和](https://leetcode-cn.com/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/)
+
+- easy done
+
+### [剑指 Offer 47. 礼物的最大价值](https://leetcode-cn.com/problems/li-wu-de-zui-da-jie-zhi-lcof/)
+
+- easy done ，用滚动数组优化
+
+- ````java
+  package SwordOf.dynamicPro;
+  
+  public class maxGifValue {
+      /*用滚动数组优化框架复杂度*/
+      public int maxValue(int[][] grid) {
+          if(grid.length==0) return 0;
+  
+          int[] upMax = new int[grid[0].length];
+          upMax[0] = grid[0][0];
+          for(int i=1;i<upMax.length;i++){
+              upMax[i] = upMax[i-1]+grid[0][i];
+          }
+  
+          for(int j=1;j<grid.length;j++){
+             upMax[0] = grid[j][0]+upMax[0];
+              for(int i=1;i<upMax.length;i++){
+                  upMax[i] =  Math.max(upMax[i-1],upMax[i])+grid[j][i];
+              }
+          }
+          return upMax[upMax.length-1];
+  
+      }
+  }
+  
+  ````
+
+###  *[剑指 Offer 46. 把数字翻译成字符串](https://leetcode-cn.com/problems/ba-shu-zi-fan-yi-cheng-zi-fu-chuan-lcof/)
+
+````text
+给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……，25 翻译成 “z”。一个数字可能有多个翻译。请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+
+ 
+
+示例 1:
+
+输入: 12258
+输出: 5
+解释: 12258有5种不同的翻译，分别是"bccfi", "bwfi", "bczi", "mcfi"和"mzi"
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/ba-shu-zi-fan-yi-cheng-zi-fu-chuan-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+**思路**
+
+- 有些动态规划题，可能一开始不一定会觉得就是用动态规划的解法，而是想着用递归，回溯。确定用动态规划的技巧是，看用递归求解时，是否有很多重复的子问题。另外，满足最优子结构；
+- 本题可以从左到右动态规划，也可以从右往左
+  - $f(i)= f(i-1)+f(i-2)*isMeet(g(i,i-1))$//左往右
+  - $f(i)=f(i+1)+f(i+2)*isMeet(g(i,i+1))$//右往左
+  - isMeet() 返回${0,1}$，注意 0+* 的情况，虽然小于25但是不能看作符合两位数的情况
+- String.valueof():..
+
+````java
+public int translateNum(int num) {
+        /*返回 int参数的字符串 int形式。 */
+        String str = String.valueOf(num);
+        int res[] = new int[str.length()];
+        res[0] = 1;
+
+        for (int i = 1; i < str.length(); i++) {
+
+            res[i] = res[i - 1] + (i == 1 ? isMeet(str, i) : res[i - 2] * isMeet(str, i));
+
+        }
+        return res[str.length() - 1];
+
+    }
+
+    public int isMeet(String str, int curIndex) {
+        char sec = str.charAt(curIndex);
+        char fir = str.charAt(curIndex - 1);
+        //符合条件的范围是 >=10 <=25
+        if((fir - '0')==0 ||(fir - '0')>=3 ) return 0;
+        else if (((sec - '0') + (fir - '0') * 10) <= 25) return 1;
+        else return 0;
+    }
+
+````
+
+
+
