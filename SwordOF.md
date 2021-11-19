@@ -433,6 +433,73 @@ class Solution {
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 ````
 
+### [剑指 Offer 18. 删除链表的节点](https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
+
+如果有结点的指针，如何实现$O(1)$的删除？
+
+
+
+### [剑指 Offer 22. 链表中倒数第k个节点](https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof/)
+
+- easy done
+
+
+
+### *[剑指 Offer 25. 合并两个排序的链表](https://leetcode-cn.com/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof/)
+
+````java
+package SwordOf.list;
+
+import SwordOf.domain.ListNode;
+
+public class MergeTwoLists {
+    /*两条链；当前的比你小，且下一个比你大，才修改*/
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if(l1 == null) return  l2;
+        if(l2 == null) return  l1;
+
+        ListNode newHead;
+        if(l1.val <=  l2.val){
+            newHead = l1;
+            newHead.next = mergeTwoLists(l1.next,l2);
+        }else{
+            newHead = l2;
+            newHead.next = mergeTwoLists(l1,l2.next);
+        }
+        return newHead;
+
+    }
+    /*非递归代码*/
+   /* class Solution {
+        public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+            ListNode dum = new ListNode(0), cur = dum;
+            while(l1 != null && l2 != null) {
+                if(l1.val < l2.val) {
+                    cur.next = l1;
+                    l1 = l1.next;
+                }
+                else {
+                    cur.next = l2;
+                    l2 = l2.next;
+                }
+                cur = cur.next;
+            }
+            cur.next = l1 != null ? l1 : l2;
+            return dum.next;
+        }
+    }
+*/
+
+}
+
+````
+
+
+
+### [剑指 Offer 52. 两个链表的第一个公共节点](https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/)
+
+- done
+
 
 
 ## 字符串
@@ -927,6 +994,400 @@ public class minRotateArray {
 ### [剑指 Offer 50. 第一个只出现一次的字符](https://leetcode-cn.com/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
 
 - easy done
+
+
+
+### *[剑指 Offer 57. 和为s的两个数字](https://leetcode-cn.com/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
+
+对撞双指针
+
+````text
+输入一个递增排序的数组和一个数字s，在数组中查找两个数，使得它们的和正好是s。如果有多对数字的和等于s，则输出任意一对即可。
+
+ 
+
+示例 1：
+
+输入：nums = [2,7,11,15], target = 9
+输出：[2,7] 或者 [7,2]
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/he-wei-sde-liang-ge-shu-zi-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+- 双指针，肯定是''同时''移动''才叫
+
+````java
+package SwordOf.Search.Array;
+
+import org.junit.Test;
+
+import java.util.Arrays;
+
+public class TwoSum {
+    public int[] twoSum(int[] nums, int target) {
+        if (nums.length == 0) return null;
+
+        int left = 0, right = nums.length - 1;
+        int[] res = new int[2];
+        while (left < right) {
+            if (nums[left] + nums[right] == target) {
+                res[0] = nums[left];
+                res[1] = nums[right];
+                break;
+                //                return res;
+            } else if (nums[left] + nums[right] < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return res;
+    }
+
+    @Test
+    public void test(){
+        int[] arr = new int[]{2,7,11,15};
+        int[] res =twoSum(arr,9);
+        System.out.println(Arrays.toString(res));
+    }
+}
+
+````
+
+
+
+### [剑指 Offer 58 - I. 翻转单词顺序](https://leetcode-cn.com/problems/fan-zhuan-dan-ci-shun-xu-lcof/)
+
+- done.
+
+### 查找-回溯
+
+### [剑指 Offer 12. 矩阵中的路径](https://leetcode-cn.com/problems/ju-zhen-zhong-de-lu-jing-lcof/)
+
+- 搜索回溯
+
+````text
+给定一个 m x n 二维字符网格 board 和一个字符串单词 word 。如果 word 存在于网格中，返回 true ；否则，返回 false 。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+ 
+
+例如，在下面的 3×4 的矩阵中包含单词 "ABCCED"（单词中的字母已标出）。
+
+````
+
+````java
+package SwordOf.Search.Recurse;
+
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeMap;
+
+public class Exist {
+    boolean res = false;
+
+    public boolean exist(char[][] board, String word) {
+
+        boolean[][] visited = new boolean[board.length][board[0].length];
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[0].length;j++){
+                exist(board, visited, i, j, word, 0);
+                if(res == true) break;
+            }
+            if(res == true) break;
+        }
+
+        return res;
+    }
+
+    public void exist(char[][] board, boolean[][] visited, int row, int col, String word, int index) {
+
+        char ch = board[row][col];
+
+        if (ch == word.charAt(index)) {
+            visited[row][col] = true;
+            index++;
+            if(index == word.length()){
+                res = true;
+                return;
+            }
+
+            //从这一步递归
+            if (row > 0 && visited[row - 1][col] == false && res == false)
+                exist(board, visited, row - 1, col, word, index );
+            if (row < visited.length - 1 && visited[row + 1][col] == false && res == false)
+                exist(board, visited, row + 1, col, word, index);
+            if (col > 0 && visited[row][col - 1] == false && res == false)
+                exist(board, visited, row, col - 1, word, index);
+            if (col < visited[0].length - 1 && visited[row][col + 1] == false && res == false)
+                exist(board, visited, row, col + 1, word, index);
+
+            index--;
+            visited[row][col] = false;
+
+        }
+
+    }
+
+
+    @Test
+    public void test() {
+        char[][] board = new char[][]{{'a', 'b'}, {'c', 'd'}};
+        String str = "abcd";
+        boolean res = exist(board, str);
+    }
+
+}
+
+
+````
+
+
+
+### [剑指 Offer 13. 机器人的运动范围](https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/)
+
+- done
+
+````java
+package SwordOf.Search.Recurse;
+
+public class MovingCount {
+
+    public int movingCount(int m, int n, int k) {
+        int finalCou = 0;
+        boolean[][] visited = new boolean[m][n];
+        boolean[][] canReach = new boolean[m][n];
+        search(m,n,k,0,0,visited,canReach);
+
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(canReach[i][j]==true) finalCou++;
+            }
+        }
+        return finalCou;
+    }
+    public void search(int m ,int n , int k ,int row,int col,  boolean[][] visited,boolean[][] canReach){
+        if(canReach[row][col]==false && checkReach(row,col,k)){
+            visited[row][col] = true;
+            canReach[row][col] = true;
+
+            if(row>0 && visited[row-1][col]==false ) search(m,n,k,row-1,col,visited,canReach);
+            if(row<m-1 && visited[row+1][col]==false ) search(m,n,k,row+1,col,visited,canReach);
+            if(col>0 && visited[row][col-1]==false ) search(m,n,k,row,col-1,visited,canReach);
+            if(col<n-1 && visited[row][col+1]==false ) search(m,n,k,row,col+1,visited,canReach);
+
+            visited[row][col] = false;
+        }
+
+    }
+    public boolean checkReach(int row,int col,int k){
+        int x=0;
+        while(row!=0 || col!=0){
+            x+=row%10;
+            x+=col%10;
+            row/=10;
+            col/=10;
+        }
+        if(x<=k) return true;
+        else return false;
+
+    }
+}
+
+````
+
+
+
+### 二叉树
+
+### [剑指 Offer 34. 二叉树中和为某一值的路径](https://leetcode-cn.com/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/)
+
+- 优化：用一个栈替代oneList ， 可省去 index
+
+````java
+package SwordOf.Search.Tree;
+
+import Hot100.Medium.TreeNode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/*到叶子的时候判断当前和就Ok了*/
+public class PathSum {
+
+    public List<List<Integer>> pathSum(TreeNode root, int target) {
+        List<List<Integer>> resList = new ArrayList<>();
+
+        pathSumSearch(root, target, new ArrayList<Integer>(), resList, 0,0);
+        return resList;
+
+
+    }
+
+    public void pathSumSearch(TreeNode root, int target, List<Integer> oneRes, List<List<Integer>> resList, int pathSum,int index) {
+        if (root == null) return;
+
+        pathSum += root.val;
+        oneRes.add(root.val);
+        //是叶子，且是目标解
+        if (root.left == null && root.right == null) {
+            if (pathSum == target) {
+                resList.add(new ArrayList<>(oneRes));
+            }
+        }
+        if(root.left!=null){
+            pathSumSearch(root.left,target,oneRes,resList,pathSum,index+1);
+        }
+        if(root.right!=null){
+            pathSumSearch(root.right,target,oneRes,resList,pathSum,index+1);
+        }
+        pathSum-=root.val;
+        oneRes.remove(index);
+
+    }
+}
+
+````
+
+
+
+### **[剑指 Offer 36. 二叉搜索树与双向链表](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/)
+
+- 输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。
+
+**思路**‘
+
+- 使用全局变量比较好做
+
+- 不使用全局变量（make it）-小结（解题思路在代码注释中）
+
+  - 思路清晰
+  - 代码执行的结构
+  - 变量引用是否被修改
+  - 递归的终止条件
+
+  ````java
+  package SwordOf.Search.Tree;
+  
+  
+  import org.junit.Test;
+  
+  /*return 的是head
+   * 每次处理分root（root即current结点）的左边，root的右边；每一种情况又分两种情况，即空和不空，所以递归代码中，有4种情况需要考虑
+   * 4种情况，处理的逻辑都是一致的，不同的情况具体操作不同而已；细节容易出错。。
+   * root的左边：
+   *  1-不空时：将root加到左边链表的尾部；修改相应的前驱和后继关系(左链的tail和root,root和左链的head)
+   *  2-空时： 将root设置为pHead,修改相应的前驱和后继关系；
+   * root的右边：
+   *  1-不空时:获得右链的头尾；修改相应的前驱和后继关系(右链的head和root,右链的tail和左链的head)
+   *  2-空时:do nothing. 我们对当前结点处理已经归并在处理root左边的情况中了
+   * */
+  public class TreeToDoublyList {
+  
+      public Node treeToDoublyList(Node root) {
+          if(root == null) return null;
+  
+          Node pHead;
+          Node rootOriginRight = root.right;//因为处理左链时会修改当前root的右指针，需要先保存其右链引用；
+          //必须先处理左边
+          if(root.left!=null){
+              pHead = treeToDoublyList(root.left);
+              pHead.left.right = root;
+              root.left = pHead.left;
+              root.right = pHead;
+              pHead.left = root;
+          }else{
+              pHead = root;
+              pHead.left = root ;
+              pHead.right = root;
+          }
+  
+          Node rightHead;
+          Node rightTail;
+          //处理右边
+          if(rootOriginRight != null){ //note(*)
+              rightHead = treeToDoublyList(rootOriginRight);
+              rightTail = rightHead.left;
+              //将右链的尾部和左链头连接
+              rightTail.right = pHead;
+              pHead.left = rightTail;
+              //将右链的头部和左链尾部连接；注root是左链的尾部
+              root.right = rightHead;
+              rightHead.left = root;
+          }else{
+              //do nothing
+          }
+          return pHead;
+  
+      }
+      @Test
+      /*[4,2,5,1,3]*/
+      public void test(){
+          Node root = new Node(4);
+          Node node1 = new Node(2);
+          Node node2 = new Node(5);
+          Node node3 = new Node(1);
+          Node node4 = new Node(3);
+          root.left = node1;
+          root.right = node2;
+          node1.left = node3;
+          node1.right = node4;
+  
+          Node head = treeToDoublyList(root);
+  
+      }
+  
+  
+  }
+  
+  ````
+
+  ![image-20211119113407948](mdPics/image-20211119113407948.png)
+
+
+
+## 排序
+
+
+
+### [剑指 Offer 21. 调整数组顺序使奇数位于偶数前面](https://leetcode-cn.com/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/)
+
+注意里面wihle循环要加上 left<right的限定
+
+本题是快排思想一种简单运用
+
+````java
+package SwordOf.Search.Array;
+
+public class Exchange {
+    public int[] exchange(int[] nums) {
+        if(nums ==null) return null;
+        int left  = 0;
+        int right = nums.length -1;
+        while(left<right){
+            //寻找当前最左偶数
+            while(left<right && nums[left]%2!=0) left++;
+            //寻找当前最右奇数
+            while(left<right && nums[right]%2!=1) right--;
+            //交换当前left和right所指的数
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+        }
+        return nums;
+
+    }
+
+}
+
+````
+
+
 
 
 
@@ -1427,6 +1888,115 @@ public int translateNum(int num) {
     }
 
 ````
+
+
+
+### *[剑指 Offer 48. 最长不含重复字符的子字符串](https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/)
+
+````text
+请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+
+ 
+
+示例 1:
+
+输入: "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+示例 2:
+
+输入: "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+
+注：此题字符串中的字符没有说就是小写字母
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+**思路**
+
+- 用动态规划是最快的，结合滑动窗口，达到$O(n),O(1)$,基本思路就是
+- $f(i)：$表示以第i个字符结尾的最长无重复字符的子串长度
+- 在确定状态转移方程时，有一个关键的变量，**d: 当前字符与上一次该字符出现的距离** 
+  - if 未出现过， $f(i)=f(i-1)+1$
+  - $d<=f(i-1):f(i)=d$
+  - $d>f(i-1):f(i)=f(i-1)+1$
+
+````java
+package SwordOf.dynamicPro;
+
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.HashSet;
+
+public class LengthOfLongestSubstring {
+    /*剑指上s的值只是小写字母，但leetcode则没有这一限制；
+    所以不能用一个小数组来记录下标了，需要用HashMap<字符，上一次出现的值>*/
+    public int lengthOfLongestSubstring(String s) {
+
+        if (s.length() == 0) return 0;
+
+      /*  int[] preAppearPosition = new int[26];
+        for (int i = 0; i < 26; i++) {
+            preAppearPosition[i] = -1;
+        }*/
+        HashMap<Character, Integer> map = new HashMap<>();
+
+        int maxLen = Integer.MIN_VALUE;
+        int len = 0;//len表示当前字符到到上一次该字符出现的情况；len>=1, 1就是相邻aa的情况;
+        int fPre = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            //该字符从未出现过
+
+            if (!map.containsKey(ch)) {
+//                fPre = fPre++;
+                fPre++;
+                map.put(ch, i);
+
+            } else { //该字符出现过
+                //先求两个该字符间的距离，再分两种情况处理
+                len = i - map.get(ch);
+                map.put(ch,i);
+
+                if (len <= fPre) fPre = len;
+                else {
+                    //fPre = fPre++;什么玩意
+                    fPre++;
+                }
+            }
+
+            if (fPre > maxLen) maxLen = fPre;
+        }
+        return maxLen;
+    }
+
+    @Test
+    public void test() {
+        String s = "abcabcbb";
+        int len = lengthOfLongestSubstring(s);
+        System.out.println(len);
+
+    }
+
+    @Test
+    public void test2() {
+        int i = 0;
+        for (int j = 0; j < 2; j++) {
+            i=++i;
+//            i=i++;
+        }
+        System.out.println(i);
+    }
+}
+
+````
+
+
 
 
 
