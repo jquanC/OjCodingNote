@@ -1387,9 +1387,17 @@ public class Exchange {
 
 ````
 
+### *[剑指 Offer 45. 把数组排成最小的数](https://leetcode-cn.com/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/)
 
+- done, but not the best way
+- “统一的比较规则”
+- 快速排序
 
+### *[剑指 Offer 61. 扑克牌中的顺子](https://leetcode-cn.com/problems/bu-ke-pai-zhong-de-shun-zi-lcof/)
 
+- 成为顺子的充分条件是什么?
+  - 无重复
+  - maxCard-minCard<5
 
 ## 树
 

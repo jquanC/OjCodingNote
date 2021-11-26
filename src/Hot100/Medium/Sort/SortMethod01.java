@@ -1,5 +1,9 @@
 package Hot100.Medium.Sort;
 
+import org.junit.Test;
+
+import java.util.Arrays;
+
 public class SortMethod01 {
     //复习一下快排，顺便和使用Arrays.sort()的性能对比一下，嘿嘿
 
@@ -17,4 +21,11 @@ public class SortMethod01 {
         quickSort(nums,l,i-1);
         quickSort(nums,i+1,r);
     }
+    @Test
+    public void test() {
+        int[] arr = new int[]{4, 5, 1, 6, 2, 7, 3, 8};
+        quickSort(arr, 0, arr.length-1);
+        System.out.println(Arrays.toString(arr));
+    }
+
 }
