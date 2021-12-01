@@ -1203,6 +1203,37 @@ public class MovingCount {
 
 
 
+### *[剑指 Offer 64. 求1+2+…+n](https://leetcode-cn.com/problems/qiu-12n-lcof/)
+
+````text
+求 1+2+...+n ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
+
+ 
+````
+
+
+
+- 所以，精髓就是，通过递归替代循环。
+- 通过短路运算符来替代条件判断
+
+````java
+class Solution {
+    public int sumNums(int n) {
+        boolean flag = n > 0 && (n += sumNums(n - 1)) > 0;
+        return n;
+    }
+}
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/qiu-12n-lcof/solution/qiu-12n-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+````
+
+
+
+
+
 ### 二叉树
 
 ### [剑指 Offer 34. 二叉树中和为某一值的路径](https://leetcode-cn.com/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/)
@@ -1349,6 +1380,66 @@ public class PathSum {
 
   ![image-20211119113407948](mdPics/image-20211119113407948.png)
 
+### [剑指 Offer 55 - I. 二叉树的深度](https://leetcode-cn.com/problems/er-cha-shu-de-shen-du-lcof/)
+
+- easy done
+
+### *[剑指 Offer 55 - II. 平衡二叉树](https://leetcode-cn.com/problems/ping-heng-er-cha-shu-lcof/)
+
+- 注意平衡的定义
+- 为了提高时间复杂度，自底向上判定如何实现？
+
+````java
+package SwordOf.Search.Tree;
+
+import Hot100.Medium.TreeNode;
+
+public class IsBalanced {
+    /**自底向上*/
+    public boolean isBalanced(TreeNode root){
+        if(root == null) return true;
+        int high  = height(root);
+        if(high>0) return true;
+        else return false;
+    }
+    /**是平衡树则返回该树高度，否则放回-1*/
+    public int height(TreeNode root){
+        if(root == null) return 0;
+        int leftDeep = height(root.left);
+        int rightDeep = height(root.right);
+        if(Math.abs((leftDeep-rightDeep))<=1 && leftDeep!=-1 && rightDeep!=-1){
+            return Math.max(leftDeep,rightDeep)+1;
+        }else{
+            return -1;
+        }
+    }
+
+    /*
+    自顶向下，复杂度更高
+    public boolean isBalanced(TreeNode root) {
+        if(root == null) return true;
+
+        boolean childValid = isBalanced(root.left) && isBalanced(root.right);
+        if(childValid){
+            int leftDepth = treeDepth(root.left);
+            int rightDepth = treeDepth(root.right);
+            if(Math.abs(leftDepth-rightDepth)>1) return false;
+            else return true;
+        }else  return false;
+    }
+    public int treeDepth(TreeNode node){
+
+        if(node == null) return 0;
+        int leftDeep = treeDepth(node.left);
+        int rightDeep = treeDepth(node.right);
+        int deep =  Math.max(leftDeep,rightDeep)+1;
+        return deep;
+    }*/
+
+}
+
+````
+
 
 
 ## 排序
@@ -1398,6 +1489,137 @@ public class Exchange {
 - 成为顺子的充分条件是什么?
   - 无重复
   - maxCard-minCard<5
+
+### [剑指 Offer 41. 数据流中的中位数](https://leetcode-cn.com/problems/shu-ju-liu-zhong-de-zhong-wei-shu-lcof/)
+
+````text
+如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+
+例如，
+
+[2,3,4] 的中位数是 3
+
+[2,3] 的中位数是 (2 + 3) / 2 = 2.5
+
+设计一个支持以下两种操作的数据结构：
+
+void addNum(int num) - 从数据流中添加一个整数到数据结构中。
+double findMedian() - 返回目前所有元素的中位数。
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/shu-ju-liu-zhong-de-zhong-wei-shu-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+**思路**
+
+- 用二分查找每次寻找插入位置。$查找插入位置O(logn),插入O(n)，所以插入数字O(N),找中位数O（1）$
+  - 如果查找过程找到数值相同数: 返回位置
+  - 如果查找过程找不到数值相同数，最后left = right, mid = (left+right)/2=left=right, 需要判断mid位置的数比插入的数大还是小，插入位置为mid 或者 mid+1
+
+````java
+class MedianFinder {
+    private ArrayList<Double> array ;
+
+    /** initialize your data structure here. */
+    public MedianFinder() {
+        array = new ArrayList<Double>();
+
+    }
+    
+    /**先find pos */
+    public void addNum(int num) {
+        int pos = findInsertPos(num);
+        array.add(pos,num);
+    }
+    
+    public double findMedian() {
+        int length = array.size();
+        if(length%2 ==0) return (array.get(length/2)+array.get(length/2 -1))/2;
+        else return array.get(length/2);
+
+    }
+    private int findInsertPos(int num){
+        if(array.size() ==0) return 0;
+        int left = 0,right = array.size()-1;
+        int mid=0;
+        while(left<right){
+            mid = (left+right)/2;
+            int midNum = array.get(mid);
+            if(num == midNum) return mid;
+            if(num < midNum) {
+                right = mid -1;
+            }else{
+                left = mid+1;
+            }
+        }
+        /**出循环时，left = riht，要考虑2个特殊的情况
+        mid= left = right = 0 ； 且 addnum > array[0]，插入位置应该是 1, 即mid+1
+        mid = left = right = size-1; 且 addnum >array[size-1],插入位置应该是 size ，即mid+1
+         */
+         mid = (left+right)/2;
+         if(mid == 0 && num > array.get(0)) return mid+1;
+         if(mid == array.size()-1 && num > array.get(array.size()-1)) return mid+1;
+        
+        return left;
+    }
+}
+
+````
+
+- 用最大堆+最小堆解$查找O(1)，插入数字Olog（n）$
+
+- 本思路其实来源于用 AVL树实现，但很多语言没有实现AVL树；故用最大堆保存较小的一半数字，最小堆保存较大的一半数字。注意维持两个堆的大小不相差超过1
+
+  ````java
+  package SwordOf.sort;
+  
+  import java.util.PriorityQueue;
+  import java.util.Queue;
+  
+  /**保持平衡，规定：偶数个元素，插入minHeap(大的一半),奇数个元素，插入maxHeap（小的一半）
+   * minHeap,保存较大的一半，小顶堆保存较小的一半*/
+  public class MedianFinder {
+      Queue<Integer> minHeap,maxHeap;
+      /** initialize your data structure here. */
+      public MedianFinder() {
+          minHeap = new PriorityQueue<Integer>();
+          maxHeap = new PriorityQueue<Integer>((x,y)->(y-x));
+      }
+  
+      /**先find pos */
+      public void addNum(int num) {
+          int size = minHeap.size()+maxHeap.size();
+          if(size%2==0){
+              maxHeap.add(num);
+              minHeap.add(maxHeap.poll());
+          }else{
+              minHeap.add(num);
+              maxHeap.add(minHeap.poll());
+          }
+      }
+  
+      public double findMedian() {
+          int size = minHeap.size()+maxHeap.size();
+          if(size%2==0){
+              return (double)(minHeap.peek()+maxHeap.peek())/2;//peek,不是poll
+          }else return (double)minHeap.peek();
+      }
+  }
+  /**
+   * Your MedianFinder object will be instantiated and called as such:
+   * MedianFinder obj = new MedianFinder();
+   * obj.addNum(num);
+   * double param_2 = obj.findMedian();
+   */
+  
+  ````
+
+  
+
+
+
+
 
 ## 树
 
