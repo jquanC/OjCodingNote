@@ -2354,5 +2354,345 @@ public class LengthOfLongestSubstring {
 
 - done
 
+### [剑指 Offer 16. 数值的整数次方](https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/)
 
+- 注意n是负数的处理，转为正数情况最后再求倒数
+- 最小负数转正数会溢出，用Long过度
+- 用快速二分时，可以用位运算优化除2，求余判断
+  - $>>2$
+  - $n\&1$
+
+````java
+class Solution {
+    public double myPow(double x, int n) {
+        if(x == 0) return 0;
+        long b = n;
+        double res = 1.0;
+        if(b < 0) {
+            x = 1 / x;
+            b = -b;
+        }
+        while(b > 0) {
+            if((b & 1) == 1) res *= x;
+            x *= x;
+            b >>= 1;
+        }
+        return res;
+    }
+}
+
+作者：jyd
+链接：https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/solution/mian-shi-ti-16-shu-zhi-de-zheng-shu-ci-fang-kuai-s/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+````
+
+
+
+### [剑指 Offer 33. 二叉搜索树的后序遍历序列](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
+
+- done
+
+
+
+## 位运算
+
+### *[剑指 Offer 15. 二进制中1的个数](https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/)
+
+- 循环检测有多少个1，$O(32),O(1)$
+
+  ````java
+  public class Solution {
+      public int hammingWeight(int n) {
+          int ret = 0;
+          for (int i = 0; i < 32; i++) {
+              if ((n & (1 << i)) != 0) {
+                  ret++;
+              }
+          }
+          return ret;
+      }
+  }
+  
+  作者：LeetCode-Solution
+  链接：https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/solution/er-jin-zhi-zhong-1de-ge-shu-by-leetcode-50bb1/
+  来源：力扣（LeetCode）
+  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+  ````
+
+  
+
+  - 利用 n&(n-1)会将**n最低位的1变为0**，循环的次数说明有多少个1，$O(K),O(1),K是n中1个个数$
+
+    ````java
+    public class Solution {
+        public int hammingWeight(int n) {
+            int ret = 0;
+            while (n != 0) {
+                n &= n - 1;
+                ret++;
+            }
+            return ret;
+        }
+    }
+    
+    作者：LeetCode-Solution
+    链接：https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/solution/er-jin-zhi-zhong-1de-ge-shu-by-leetcode-50bb1/
+    来源：力扣（LeetCode）
+    著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+    ````
+
+
+
+
+### *[剑指 Offer 65. 不用加减乘除做加法](https://leetcode-cn.com/problems/bu-yong-jia-jian-cheng-chu-zuo-jia-fa-lcof/)
+
+- 从十进制的加法过程3步骤分析：先不考虑进位的加法，再考虑产生进位的值，再把两者相加
+- 二进制也是。同时，二进制运算有如下性质
+  - 加法，异或运算
+  - 进位：（与运算）<<1 
+
+````java
+class Solution {
+    public int add(int a, int b) {
+        int sum,carry;
+        do{
+            sum = a^b;
+            carry = (a&b)<<1;
+            a = sum;
+            b = carry;
+        }while(carry!=0);
+        return sum;
+    }
+}
+````
+
+- JAVA中，负数用补码的形式表示，所以加法和减法的处理是统一的；对负数的处理也是统一的。
+
+
+
+### *[剑指 Offer 56 - I. 数组中数字出现的次数](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+
+````text
+一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。 
+
+示例 1：
+
+输入：nums = [4,1,4,6]
+输出：[1,6] 或 [6,1]
+示例 2：
+输入：nums = [1,2,10,4,1,4,3,3]
+输出：[2,10] 或 [10,2]
+ 
+限制：
+
+2 <= nums.length <= 10000
+
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+**思路**
+
+- 利用异或的性质。如果题目改为，数组中只有1个数字不同，那么我们对数组中的数字累积异或，结果就是那个唯一不同的数。对于此题，题目变成了有两个异或的数。如果我们能够将他们分别分开，将原数组分成2个子数组，子数组中包含一个不同的数，以及两两相同的数，那么分别对子数组累计异或，就能找到这两个数了。
+- 我们可以对原数组累计异或，得到结果tem。 观察tem,寻找第一个不为0的二进制位（从右往左更方便，从左往右也可以）。
+- 相同的两个数，该位一定是相同的，一定会被分在同一边（*但相同的数不是平均分配到两个“逻辑子数组”的，要注意。取决这个数字该到底是0还是1*。但是两个相同数总是分在同一边，相与为0）。对于两个不同的数，因为该位结果为1，所以那两个不同的数，该位也是不同的。
+- 所以，我们根据这个特点，逻辑上就可以把数组中的数全部按我们想要的分成两组了。该位为0的数，以及该位为1的数。
+
+````java
+class Solution {
+    public int[] singleNumbers(int[] nums) {
+        int tem = nums[0];
+        for(int i=1;i<nums.length;i++){
+            tem = tem ^ nums[i];
+        }
+        //寻找结果的二进制表示第一个不为0的位置,从右边开始更方便；
+        int findSup = 1;
+        while((tem & findSup) == 0){
+            findSup = findSup<<1;
+        }
+        int subNumRes1=0,subNumRes2=0;
+        for(int i=0;i<nums.length;i++){
+            /**
+            if((nums[i]&findSup) == 0 ) subNumRes1 ^= nums[i];
+            if((nums[i]&findSup) == 1 ) subNumRes2 ^= nums[i];
+            */
+            //注意nums[i]&findSup) != 0的反面，是那一位为1，不是整个数值为1，所以上面注释的写法得到的结果是不一定对的
+            if((nums[i]&findSup) != 0 ) subNumRes1 ^= nums[i];
+            else subNumRes2 ^= nums[i];
+        }
+        return new int[]{subNumRes1,subNumRes2};
+
+    }
+}
+````
+
+### *[剑指 Offer 56 - II. 数组中数字出现的次数 II](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-ii-lcof/)
+
+````text
+在一个数组 nums 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+示例 1：
+
+输入：nums = [3,4,3,3]
+输出：4
+
+示例 2：
+
+输入：nums = [9,1,7,9,7,9,7]
+输出：1
+````
+
+**思路**
+
+- 如果一个数字出现3次，那么他的二进制表示的每一位也都出现3次。
+- 把每一位的数字和加起来，如果每一位的和都能被3整除，那么那个只出现一次的数字在该位的二进制数是0，反之是1 。
+- 注意：一个for循环的次数如果是固定的，那么它是 $O(1)$的
+- 二进制的加权运算和十进制一样：result = (result<<1)+bit //乘2累加，注意移位运算符的时间复杂度很低
+
+````java
+class Solution {
+    public int singleNumber(int[] nums) {
+        
+        int[] bitCou = new int[32];
+       
+        for(int i=0;i<nums.length;i++){
+            int bitMask = 1;
+            //第二个for循环的时间复杂度是 O（1）
+            for(int j=31;j>=0;j--){
+                int bit = nums[i] & bitMask;
+                if(bit != 0) bitCou[j]+=1;
+                bitMask = bitMask<<1;
+            }
+        }
+
+        int result = 0;
+        for(int j=0;j<32;j++){
+            int bit = bitCou[j]%3;
+            result = (result<<1)+bit;//*2+该位； 注意移位运算符的优先级非常地，比==还低，(result<<1)+bit 不加括号就错了 
+        }
+        return result;
+
+    }
+
+}
+````
+
+## 数学
+
+### *[剑指 Offer 39. 数组中出现次数超过一半的数字](https://leetcode-cn.com/problems/shu-zu-zhong-chu-xian-ci-shu-chao-guo-yi-ban-de-shu-zi-lcof/)
+
+- 方法一：快速选择中位数
+- **方法二：巧妙的统计**
+
+````java
+package SwordOf.math;
+
+import org.junit.Test;
+
+import java.util.Random;
+
+public class MajorityElement2 {
+
+    public int majorityElement(int[] nums) {
+        int compareCurNum = nums[0];
+        int curNumCou = 1;
+        for(int i=1;i<nums.length;i++){
+            if(curNumCou == 0){
+                compareCurNum = nums[i];
+                curNumCou++;
+            }else{
+                if(nums[i]==compareCurNum) curNumCou++;
+                else{
+                    curNumCou--;
+                }
+            }
+
+        }
+        return compareCurNum;
+    }
+
+    @Test
+    public void test(){
+        int[] nums = new int[]{3,2,3};
+        int res = majorityElement(nums);
+        System.out.println(res);
+    }
+    @Test public void test2(){
+        Random random = new Random();
+        for(int i =0;i<20;i++){
+            int pos = 0+random.nextInt(2-0+1);
+            System.out.println(pos);
+        }
+
+
+
+    }
+}
+/***************方法二***************/
+package SwordOf.math;
+
+import org.junit.Test;
+
+import java.util.Random;
+
+public class MajorityElement {
+
+    public int majorityElement(int[] nums) {
+        //解法一 用基于快排的随机快速选择，选择中位数
+        int k = nums.length/2;
+        return quickSelectKpos(nums,0,nums.length-1,k);
+
+
+    }
+    public int quickSelectKpos(int[]nums,int start,int end,int k){
+        int partiPos = randomPartition(nums,start,end);
+        if(partiPos == k) return nums[k];
+        else if(partiPos <k ){
+            return quickSelectKpos(nums,partiPos+1,end,k);
+        }else return quickSelectKpos(nums,start,partiPos-1,k);
+    }
+    public int randomPartition(int[] nums,int start,int end){
+        if(start>=end) return start;
+
+        Random random = new Random();
+        int exchangePos = start + random.nextInt(end-start+1);
+        int sentinel = nums[exchangePos];
+        int tem = nums[start];
+        nums[start] = nums[exchangePos];
+        nums[exchangePos] = tem;
+
+        int left = start;
+        int right = end;
+        while(left<right){
+            while(nums[right]>=sentinel && left<right) right--;
+            nums[left] = nums[right];
+            while(nums[left]<= sentinel && left<right) left++;
+            nums[right] = nums[left];
+        }
+        //最后这里忘记放置哨兵了
+        nums[left] = sentinel;
+        return left;
+    }
+    @Test
+    public void test(){
+        int[] nums = new int[]{3,2,3};
+        int res = majorityElement(nums);
+        System.out.println(res);
+    }
+    @Test public void test2(){
+        Random random = new Random();
+        for(int i =0;i<20;i++){
+            int pos = 0+random.nextInt(2-0+1);
+            System.out.println(pos);
+        }
+
+
+
+    }
+}
+
+
+````
 

@@ -21,5 +21,11 @@ public class ThreadLocalUsage {
         t.start();
         System.out.println("pos2 finished");
     }
+    @Test
+    public void test2(){
+        int pos = 21;
+        String str = String.valueOf(pos);
+        System.out.println(str);
+    }
 
 }
