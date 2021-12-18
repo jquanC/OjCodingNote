@@ -150,6 +150,94 @@ public class MinStack {
 
 
 
+### *[剑指 Offer 59 - I. 滑动窗口的最大值（单调队列！）](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/)
+
+- 我的解 每次建个k大小的堆
+- $O(n)时间复杂度解法$：
+  - 滑动窗口就像一个队列，我们维护以下性质，满足设计的队列是一个滑动窗口的“映射”：1 队列存储的是元素对应在nums数组的下标。且队列最左边对应的元素的值是元素中最大的。2 队列中的元素的值（下标），从小到大。所以这是一个单调队列，它的值是递增的，它的值（指下标）对应的数组元素的值的递减的。
+  - 为什么要维护这样一个滑动窗口的映射队列：
+    - 滑动窗口每次新进入一个元素。如果两个元素都在滑动窗口内，前面的元素倘若小于后面的元素，那么滑动窗口内的最大的元素永远是后面的那一个，所以小的元素可以永久的删除（从对尾出队）。如果新的元素比队尾元素小，那么需要保留，因为前面的元素在数组左边可能先出队，新元素有可能成为窗口内的最大元素。 所以 为了保持队列的性质，**需要不断地将新的元素与队尾的元素相比较，如果前者大于等于后者，那么队尾的元素就可以被永久地移除，我们将其弹出队列。我们需要不断地进行此项操作，直到队列为空或者新的元素小于队尾的元素**。
+  - 单调队列都有一个重要性质：**当一个元素进入队列的时候，它前面所有比它小的元素就不会再对答案产生影响。**
+  - 基于上述分析，需要使用的数据结构是双端队列。
+
+````java
+public int[] maxSlidingWindow(int[] nums, int k) {
+        if (nums.length == 0 || nums == null) return new int[0];
+        if (k == 1) return nums;
+
+        int[] res = new int[nums.length-k+1];
+        Deque<Integer> deque = new LinkedList<Integer>();
+        for(int i=0;i<k;i++){
+            while(!deque.isEmpty() && nums[i]>nums[deque.peekLast()]) deque.pollLast();
+            deque.offerLast(i);
+        }
+        res[0] = nums[deque.peekFirst()];
+        for(int i=k;i<nums.length;i++){
+            while(!deque.isEmpty() && nums[i]>nums[deque.peekLast()]) deque.pollLast();
+            deque.offerLast(i);
+
+            while(i-deque.peekFirst()+1>k) deque.pollFirst();
+
+            res[i-k+1] = nums[deque.peekFirst()];
+        }
+        return res;
+
+    }
+````
+
+### *[剑指 Offer 59 - II. 队列的最大值](https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/)
+
+<img src="mdPics/image-20211218124252131.png" alt="image-20211218124252131" style="zoom: 67%;" />
+
+````java
+class MaxQueue {
+    private Queue<Integer> queue ;
+    private Deque<Integer> deque ;
+
+
+    public MaxQueue() {
+        queue = new LinkedList<>();
+        deque = new LinkedList<>();
+    }
+    
+    public int max_value() {
+        if(!deque.isEmpty()) return deque.peekFirst();
+        else return -1;
+    }
+    
+    public void push_back(int value) {
+        while(!deque.isEmpty() && value > deque.peekLast()) deque.pollLast();
+        deque.offerLast(value);
+
+        queue.offer(value);
+    }
+    
+    public int pop_front() {
+        if(!queue.isEmpty()){
+            int ans = queue.poll();
+            if(ans == deque.peekFirst()) deque.pollFirst();
+            return ans;
+        }else return -1;
+    }
+}
+
+/**
+ * Your MaxQueue object will be instantiated and called as such:
+ * MaxQueue obj = new MaxQueue();
+ * int param_1 = obj.max_value();
+ * obj.push_back(value);
+ * int param_3 = obj.pop_front();
+ */
+````
+
+### 小结-单调队列
+
+- 主要理解单调队列的思想和实现方式
+- 以及应用：实现最大值队列、求滑动窗口最大值
+- java队列的使用
+
+
+
 ## 链表
 
 ### [剑指 Offer 06. 从尾到头打印链表](https://leetcode-cn.com/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/)
@@ -2348,6 +2436,103 @@ public class LengthOfLongestSubstring {
 
 
 
+### [剑指 Offer 14- I. 剪绳子](https://leetcode-cn.com/problems/jian-sheng-zi-lcof/)
+
+````text
+给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），每段绳子的长度记为 k[0],k[1]...k[m-1] 。请问 k[0]*k[1]*...*k[m-1] 可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+
+示例 1：
+
+输入: 2
+输出: 1
+解释: 2 = 1 + 1, 1 × 1 = 1
+示例 2:
+
+输入: 10
+输出: 36
+解释: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36
+提示：
+
+2 <= n <= 58
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/jian-sheng-zi-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+- 可用动态规划做
+- 也可以用数学的方法做，贪心算法
+
+
+
+**动态规划解**
+
+这道题在解的时候，容易陷入剪几段没说明，要列举很多情况的误区。实际上，外面定义f[m] 为长度为m下，符合题意的最优解。动态转移方程，$f[m]=Max_{1<=i<=m/2}(f[i],f[m-i])$可以包含全部“剪法的情况”。**剪成任意多段（>2），肯定第一刀是剪成2段, 或者说剪得再碎，也能拼成两段**。所以这就是一个常见的dp问题。小细节是,因为至少要剪一刀,注意f[ ]的初始条件和特殊情况下的直接返回值，并不是对应的。
+
+
+
+**贪心解**
+
+- 尽可能分成长为3的段，其次是分成长度为2的段。注意剩下长度是4时，不再优秀剪成3的段，因为2x2>1x3
+
+- 具体分析可以看剑指offer，这里就不赘述了，后贴代码。因为有点巧妙，大多数人只有做过才知道吧。
+
+  
+
+****
+
+````java
+//动态规划解
+class Solution {
+    /**定义f[i] 为把长度为i的绳子剪成若干段后（可不剪即1段）的符合题意乘积最大值 */
+    public int cuttingRope(int n) {
+        int[] f = new int[n+1];
+        if(n<2) return 0;
+        if(n==2) return 1;
+        if(n==3) return 2;
+        if(n==4) return 4;
+
+        f[0] = 0;
+        f[1] = 1;
+        f[2] = 2;
+        f[3] = 3;
+
+        for(int i=4;i<=n;i++){
+            int product=0;
+            int max = Integer.MIN_VALUE;
+            for(int j=2;j<=i/2;j++){
+                product = f[j]*f[i-j];
+                if(product > max) max = product;
+            }
+            f[i] = max;
+        }
+        return f[n];
+    }
+}
+
+//贪心解
+class Solution {
+    
+    public int cuttingRope(int n) {
+        if(n==2) return 1;
+        if(n==3) return 2;
+        
+
+      int timesOf3 = n/3;
+      if(n%3 == 1) timesOf3 -= 1;
+      int timesOf2 = (n - timesOf3*3)/2;
+      return (int) (Math.pow(3,timesOf3)*Math.pow(2,timesOf2));
+
+    }
+}
+````
+
+
+
+
+
+
+
 ## 递归和分治算法
 
 ### *[剑指 Offer 07. 重建二叉树](https://leetcode-cn.com/problems/zhong-jian-er-cha-shu-lcof/)
@@ -2696,3 +2881,227 @@ public class MajorityElement {
 
 ````
 
+
+
+### [剑指 Offer 66. 构建乘积数组](https://leetcode-cn.com/problems/gou-jian-cheng-ji-shu-zu-lcof/)
+
+- 动态规划
+
+- 数学
+
+  - <img src="mdPics/image-20211211103317431.png" alt="image-20211211103317431" style="zoom:50%;" />
+  - 对角线元素填充一，把要求解的res[i] 看作左右两边的乘积
+  - 利用动态规划节约空间复杂度
+
+  ````java
+  class Solution {
+      public int[] constructArr(int[] a) {
+          if(a.length ==0) return new int[0];
+  
+          int len = a.length;
+          int[] res = new int[len];
+          res[0]=1;
+  
+          //先求左边乘积
+          for(int i=0;i<len-1;i++){
+              res[i+1] = res[i]*a[i];
+          }
+  
+          int temRight = a[len-1];
+          for(int i=len-2;i>=0;i--){
+             res[i] = res[i]*temRight;
+             temRight *= a[i];
+          }
+          return res;
+      }
+  }
+  ````
+
+  ### [剑指 Offer 57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
+  
+  - done
+  - java返回 int[][]注意一下
+
+### *[剑指 Offer 62. 圆圈中最后剩下的数字-与瑟夫环问题](https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
+
+- 推导
+- <img src="mdPics/image-20211212120804624.png" alt="image-20211212120804624" style="zoom:80%;" />
+
+````java
+class Solution {
+    public int lastRemaining(int n, int m) {
+        int f = 0;
+        for (int i = 2; i != n + 1; ++i) {
+            f = (m + f) % i;
+        }
+        return f;
+    }
+}
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/solution/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-by-lee/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+    
+    class Solution {
+    public int lastRemaining(int n, int m) {
+        return f(n, m);
+    }
+
+    public int f(int n, int m) {
+        if (n == 1) {
+            return 0;
+        }
+        int x = f(n - 1, m);
+        return (m + x) % n;
+    }
+}
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/solution/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-by-lee/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+````
+
+## 模拟
+
+### [剑指 Offer 29. 顺时针打印矩阵](https://leetcode-cn.com/problems/shun-shi-zhen-da-yin-ju-zhen-lcof/)
+
+- done
+
+
+
+### *[剑指 Offer 31. 栈的压入、弹出序列](https://leetcode-cn.com/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof/)
+
+- 算法-没想到
+
+- 实现代码-做的不好；
+
+- 小结：模拟就是还原这个过程
+
+  
+
+````java
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+
+        Stack<Integer> stack = new Stack<>(); 
+
+        int i=0;
+        //不管成不成功，都是要全部入栈的
+        for(int num : pushed){
+            stack.push(num);
+            while(!stack.isEmpty() && stack.peek()==popped[i]){
+                stack.pop();
+                i++;
+            }
+        }
+        if(stack.isEmpty()) return true;
+        else return false;       
+        
+    }
+}
+````
+
+### [剑指 Offer 67. 把字符串转换成整数](https://leetcode-cn.com/problems/ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu-lcof/)
+
+- hard done ； 这种题要怎么做才好
+  - 除了把大问题切分成几个部分做判断，每个细分部分，又会有很多细节
+- Good 方法和逻辑（参考题解）
+
+
+
+````java
+
+class Solution {
+    public int strToInt(String str) {
+        char[] c = str.trim().toCharArray();
+        if(c.length == 0) return 0;
+        int res = 0, bndry = Integer.MAX_VALUE / 10;
+        int i = 1, sign = 1;
+        if(c[0] == '-') sign = -1;
+        else if(c[0] != '+') i = 0;
+        for(int j = i; j < c.length; j++) {
+            if(c[j] < '0' || c[j] > '9') break;
+            if(res > bndry || res == bndry && c[j] > '7') return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            res = res * 10 + (c[j] - '0');
+        }
+        return sign * res;
+    }
+}
+
+作者：jyd
+链接：https://leetcode-cn.com/problems/ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu-lcof/solution/mian-shi-ti-67-ba-zi-fu-chuan-zhuan-huan-cheng-z-4/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+/******************************************/
+package SwordOf.simulation;
+
+import org.junit.Test;
+
+public class StrtoInt {
+    public int strToInt(String str) {
+        long res = 0;
+        boolean sym = true;
+        boolean symHaveCheck =false;
+        boolean checkRes = true;
+
+        boolean haveMeetFirstLeagal = false;
+
+        for(int i=0;i<str.length();i++){
+            char ch = str.charAt(i);
+            if(haveMeetFirstLeagal==false &&( ch=='+'||ch=='-'||(ch>='0' && ch<='9'))){
+                haveMeetFirstLeagal = true;
+            }
+            //如果前导无效字符判定还没结束，且前导字符不合法，返回0
+            if(haveMeetFirstLeagal==false){
+                if(!preLegalChar(ch)) return 0;
+
+            }else{
+                if(symHaveCheck==false && (ch>='0'&&ch<='9')){
+                    symHaveCheck = true;
+                }
+                if((ch=='+'||ch=='-') && symHaveCheck == false){
+                    symHaveCheck = true;
+                    if(ch=='-') sym = false;
+                    continue;
+                }
+                if(ch>='0'&&ch<='9'){
+                    res = res*10+ch-'0';
+                    if(res>Integer.MAX_VALUE) break;
+                }else{
+                    break;
+                }
+            }
+
+        }
+        if(sym){
+            if(res>Integer.MAX_VALUE) return Integer.MAX_VALUE;
+            return (int)res;
+        }else{
+            res = -res;
+            if(res<Integer.MIN_VALUE) return Integer.MIN_VALUE;
+            else return (int)(res);
+        }
+    }
+
+
+    private boolean preLegalChar(char ch){
+        if(ch==' ') return true;
+        else return false;
+    }
+    @Test
+    public void test(){
+        String str = "9223372036854775808";//-9,223,372,036,854,775,808 ~9,223,372,036,854,775,807
+        int res = strToInt(str);
+        System.out.println(res);
+    }
+}
+
+````
+
+
+
+
+
+  
