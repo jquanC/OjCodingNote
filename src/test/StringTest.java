@@ -1,5 +1,7 @@
 package test;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 
 public class StringTest {
@@ -18,5 +20,13 @@ public class StringTest {
         boolean res = strk1==""? true:false;
         System.out.println(res);
 
+    }
+    @Test
+    public void test(){
+        String str = "";
+        System.out.println(str+7);
+        String str2 = "12345";
+        str2.toCharArray();
+        String str3 = "11";
     }
 }

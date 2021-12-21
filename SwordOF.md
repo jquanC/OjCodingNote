@@ -383,9 +383,10 @@ public class reverseListRecursionSo {
 
 <img src="mdPics/image-20211027105807455.png" alt="image-20211027105807455" style="zoom:67%;" />
 
-**思路**
 
-- 题目的关键是如何copy random指针，因为random指针是随机的
+
+题目的关键是如何copy random指针，因为random指针是随机的
+
 - 我的解法，两个HashMap<Node,id> Hash<id,Node>来维护这个关系，$O(n),O(n)$ ,比较常规的思路
 - 参考解1：显然适合用回溯（递归）做，到最深处时，所有的结点都已经被复制出来的；整个过程，将next节点和random节点的拷贝操作相互独立。用hashmap<Node,Node>维护原节点和copy节点的关系；$O(n),O()$
 - 参考解2：巧妙的解法$O(n),O(1)$
@@ -1320,6 +1321,116 @@ class Solution {
 
 
 
+### *[剑指 Offer 38. 字符串的排列](https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/)
+
+好题(思想和代码的锻炼价值都很高)，本题的最优解基于掌握：「[31. 下一个排列的官方题解](https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/)」
+
+- 复习时把代码每一行都弄清楚
+
+为了穷举所有排列，每次都通过nextPermutation来判断是否存在下一个排列（时间复杂度O（n））, 全部排列由$n！$可能，所以这是最快的解法，时间复杂度 $O(n*(n!))$.代码的关键在于nextPermutation。简单回顾一下
+
+- 因为要穷举全部，初始状态对序列数组排序，呈升序状态。
+- 寻找符合要求的a[i], 再寻找符合要求的a[j]
+  - 能找到i, 说明至少存在nextPermutation，否则return false
+- 找到a[i],a[j]后交换，此时a[i+1]....a[len-1] **一定是降序的**
+- 利用a[i+1]....a[len-1] **是降序**的性质，再O（n）内将其排序为升序。得到想要的nextPermutation状态。
+
+- 寻找a[i]a[j]过程中high level 层面的思想就是，找到两个数，一个在左边一个在右边，右边的数比左边的数大，交换他们得到的新序列比原来更大。我们希望还变大的幅度尽可能小。这就要求
+  - 左边的数尽可能靠右
+  - 右边的数尽可能小
+
+````java
+package SwordOf.Search.Recurse;
+
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Permutation {
+    public String[] permutation(String s) {
+        char[] chArr = s.toCharArray();
+        List<String> res = new ArrayList<>();
+        Arrays.sort(chArr);
+        res.add(String.valueOf(chArr));
+        while (nextPermutation(chArr)) {
+            res.add(String.valueOf(chArr));
+        }
+        return res.toArray(new String[res.size()]);
+    }
+
+    boolean nextPermutation(char[] arr) {
+        boolean findRes = false;
+        //找a[i]
+        int i = arr.length - 2;
+        while (i >= 0) {
+            if (arr[i] < arr[i + 1]) {
+                findRes = true;
+                break;
+            }
+            i--;
+        }
+        if (findRes) {
+            int j = arr.length - 1;
+            //上面保证了这里至少能找到一个j
+            while (j > i) {
+                if (arr[j] > arr[i]) break;
+                j--;
+            }
+            swap(arr, i, j);
+            //将a[i+1],...,a[len-1]这一段重排是升序。由于当前状态是降序，直接做交换可以在O(n)时间内完成
+            reverse(arr, i + 1, arr.length - 1);
+        }
+        return findRes;
+    }
+
+    private void swap(char[] arr, int left, int right) {
+        char temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
+    }
+
+    private void reverse(char[] arr, int start, int end) {
+        while (end > start) {
+            swap(arr, start, end);
+            start ++;
+            end --;
+        }
+    }
+    @Test
+    public void test(){
+        String s = "mdpesmo";
+        String [] res = permutation(s);
+        System.out.println(Arrays.toString(res));
+    }
+}
+
+````
+
+
+
+比较一般的做法是用回溯，使用标记数组一个个填空。
+
+但是该递归函数并没有满足「全排列不重复」的要求，**在重复的字符较多的情况下，该递归函数会生成大量重复的排列**。对于任意一个空位，如果存在重复的字符，该递归函数会将它们重复填上去并继续尝试导致最后答案的重复。
+
+解决该问题的一种较为直观的思路是，我们首先生成所有的排列，然后进行去重。而另一种思路是我们通过修改递归函数，使得该递归函数只会生成不重复的序列。
+
+具体地，我们只要在递归函数中设定一个规则，保证在填每一个空位的时候重复字符只会被填入一次。**具体地，我们首先对原字符串排序，保证相同的字符都相邻，在递归函数中，我们限制每次填入的字符一定是这个字符所在重复字符集合中「从左往右第一个未被填入的字符**」，即如下的判断条件：
+
+if (vis[j] || (j > 0 && !vis[j - 1] && s[j - 1] == s[j])) {
+    continue;
+}
+这个限制条件保证了对于重复的字符，我们一定是从左往右依次填入的空位中的。
+
+
+
+
+
+
+
+### 二叉树
+
 ### *[剑指 Offer 68 - I. 二叉搜索树的最近公共祖先](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
 
 **分析：**
@@ -1442,7 +1553,7 @@ public void test(){
 
 
 
-### 二叉树
+
 
 ### [剑指 Offer 34. 二叉树中和为某一值的路径](https://leetcode-cn.com/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/)
 
@@ -1647,6 +1758,93 @@ public class IsBalanced {
 }
 
 ````
+
+
+
+### *[剑指 Offer 37. 序列化二叉树](https://leetcode-cn.com/problems/xu-lie-hua-er-cha-shu-lcof/)
+
+````text
+请实现两个函数，分别用来序列化和反序列化二叉树。
+
+你需要设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+
+提示：输入输出格式与 LeetCode 目前使用的方式一致，详情请参阅 LeetCode 序列化二叉树的格式。你并非必须采取这种方式，你也可以采用其他的方法解决这个问题。
+
+ 
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/xu-lie-hua-er-cha-shu-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+
+
+**此题大致思路和细节**
+
+- 对于空孩子，用一个标识符来标识，比如"$", 这样只需要对树做一次遍历就可以缺定树的构成（满二叉树，一个萝卜一个坑）。
+- 每个结点值可能是负数，以及几位数不缺定，因为要序列化为字符串，所以每个值都需要加入一个分隔标识符，方便后面的反序列化，比如“，”
+- 还有个小细节，序列化字符串最后是以“，”结尾，用split分割后String数组最后应该有一个空元素“”, 这里不用管。因为在遇到之前，递归建树已经终止了。
+
+````java
+package SwordOf.Search.Recurse;
+
+import Hot100.Medium.TreeNode;
+import org.junit.Test;
+import sun.reflect.generics.tree.Tree;
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ * int val;
+ * TreeNode left;
+ * TreeNode right;
+ * TreeNode(int x) { val = x; }
+ * }
+ */
+public class Codec {
+    private int pos = -1;
+
+    // Encodes a tree to a single st5ring.
+    public String serialize(TreeNode root) {
+        String serializeOrder = "";
+        if (root == null) {
+            serializeOrder += "$,";
+            return serializeOrder;
+        }
+        serializeOrder += root.val+",";
+        serializeOrder += serialize(root.left);
+        serializeOrder += serialize(root.right);
+        return serializeOrder;
+
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        String[] strArr = data.split(",");
+        return deserializeSup(strArr);
+    }
+    public TreeNode deserializeSup(String[] dataArr) {
+        pos++;
+        String cur = dataArr[pos];
+
+        TreeNode node;
+        if (!cur.equals("$")){
+            node = new TreeNode(Integer.valueOf(cur));
+            node.left = deserializeSup(dataArr);
+            node.right = deserializeSup(dataArr);
+        }else return null;
+
+        return node;
+    }
+}
+// Your Codec object will be instantiated and called as such:
+// Codec codec = new Codec();
+// codec.deserialize(codec.serialize(root));
+````
+
+### *[剑指 Offer 38. 字符串的排列](https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/)
+
+- 基础:[下一个排列的官方题解](https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/)
 
 
 
@@ -2525,6 +2723,62 @@ class Solution {
 
     }
 }
+````
+
+### *[剑指 Offer 19. 正则表达式匹配](https://leetcode-cn.com/problems/zheng-ze-biao-da-shi-pi-pei-lcof/)
+
+````text
+请实现一个函数用来匹配包含'. '和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。
+````
+
+
+
+````java
+package SwordOf.dynamicPro;
+
+public class IsMatch {
+
+    public boolean isMatch(String s, String p) {
+        char[] sArr = s.toCharArray();
+        char[] pArr = p.toCharArray();
+        return matchSup(sArr, pArr, sArr.length - 1, pArr.length - 1);
+    }
+
+    public boolean matchSup(char[] sArr, char[] pArr, int sIndex, int pIndex) {
+        //全部匹配完
+        if (sIndex == -1 && pIndex == -1) return true;
+        if (sIndex >= 0 && pIndex < 0) return false;
+        if (sIndex < 0 && pIndex >= 0) {
+            if (pArr[pIndex] == '*' && pIndex>=1)
+                return matchSup(sArr, pArr, sIndex, pIndex - 2);
+            else return false;
+        }
+        //匹配状态转移方程
+        if (pArr[pIndex] == '*') {
+            boolean state1 = false, state2 = false;
+            if (isMatchChar(sArr[sIndex], pArr[pIndex - 1]))
+                state1 = matchSup(sArr, pArr, sIndex - 1, pIndex - 2) || matchSup(sArr, pArr, sIndex - 1, pIndex)||matchSup(sArr, pArr, sIndex, pIndex-2);
+            else state2 = matchSup(sArr, pArr, sIndex, pIndex - 2);
+
+            return state1 || state2;
+            //简化代码可以这么写
+//            return matchSup(sArr,pArr,sIndex-1,pIndex-2)||matchSup(sArr,pArr,sIndex-1,pIndex)matchSup(sArr,pArr,sIndex,pIndex-2);
+
+        } else {
+            if (isMatchChar(sArr[sIndex], pArr[pIndex])) return matchSup(sArr, pArr, sIndex - 1, pIndex - 1);
+            else return false;
+        }
+
+
+    }
+
+    public boolean isMatchChar(char sch, char pch) {
+        if (pch == '.') return true;
+        if (pch == sch) return true;
+        else return false;
+    }
+}
+
 ````
 
 
