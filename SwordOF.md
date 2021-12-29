@@ -2663,9 +2663,81 @@ public class LengthOfLongestSubstring {
 
 
 
+### *[剑指 Offer 14- II. 剪绳子 II](https://leetcode-cn.com/problems/jian-sheng-zi-ii-lcof/)
+
+本题和剪绳子I一样，但是考虑了大数情况，要求对结果取余。
+
+变相考核的是 “快速幂求余”。
+
+题解给出了一种快速幂降幂方法：$(x^a)\%p=((x^2)\%p)^{a/2}$，算法实现比较不容易理解
+
+快速幂还可以这么降：$x^a\%p=(x^{a/2}\%p)*(x^{a/2}\%p)$，算法实现更容易理解
+
+注意rem, reminder返回值要用Long型作为过渡
+
+````java
+//第一种
+public int cuttingRope(int n) {
+        if (n <= 3) return n - 1;
+
+        long rem = 1;
+        long x = 3;
+        int b = n % 3;
+        int p = 1000000007;
+        for (int a = n / 3 - 1; a > 0; a /= 2) {
+            if (a % 2 == 1) rem = (rem * x) % p;
+            x = (x * x) % p;
+        }
+        if (b == 0) return (int)((rem * 3) % p);
+        if (b == 1) return (int)((rem * 4) % p);
+
+        return (int)((rem * 6) % p);
+
+    }
+//第二种
+ public int cuttingRope(int n) {
+        if (n <= 3) return n-1;
+
+
+        int b = n / 3;
+        int p = 1000000007;
+
+        long res=0;
+        if (n % 3 == 0) {
+            res = reminder(3, b, p);
+        } else if(n%3 ==1){
+            res = (4*reminder(3, b-1, p))%p;
+        }else{
+            res = (2*reminder(3, b, p))%p;
+        }
+        return (int)res;
+    }
+
+    private long reminder(int x, int a, int p) {
+
+        if(a==0) return 1;
+        if (a == 1) return x;
+        long res = reminder(x, a / 2, p);
+        if (a % 2 == 0) {
+            res = (res*res) % p;
+        } else {
+            res = ((res * res)%p * x) % p;
+        }
+        return res;
+    }
+````
+
+快速幂第一种降幂方式解析：
+
+![image-20211227103728509](mdPics/image-20211227103728509.png)
+
+![image-20211227103740474](mdPics/image-20211227103740474.png)
+
+
+
 **动态规划解**
 
-这道题在解的时候，容易陷入剪几段没说明，要列举很多情况的误区。实际上，外面定义f[m] 为长度为m下，符合题意的最优解。动态转移方程，$f[m]=Max_{1<=i<=m/2}(f[i],f[m-i])$可以包含全部“剪法的情况”。**剪成任意多段（>2），肯定第一刀是剪成2段, 或者说剪得再碎，也能拼成两段**。所以这就是一个常见的dp问题。小细节是,因为至少要剪一刀,注意f[ ]的初始条件和特殊情况下的直接返回值，并不是对应的。
+这道题在解的时候，容易陷入剪几段没说明，要列举很多情况的误区。实际上，外面定义f[m] 为长度为m下，剪成符合题意的段数下的最优解。动态转移方程，$f[m]=Max_{1<=i<=m/2}(f[i],f[m-i])$可以包含全部“剪法的情况”。**剪成任意多段（>2），肯定第一刀是剪成2段, 或者说剪得再碎，也能拼成两段**。所以这就是一个常见的dp问题。小细节是,因为至少要剪一刀,注意f[ ]的初始条件和特殊情况下的直接返回值，并不是对应的。
 
 
 
@@ -2783,6 +2855,112 @@ public class IsMatch {
 
 
 
+### *[剑指 Offer 49. 丑数](https://leetcode-cn.com/problems/chou-shu-lcof/)
+
+````text
+我们把只包含质因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。
+
+
+示例:
+
+输入: n = 10
+输出: 12
+解释: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 是前 10 个丑数。
+说明:  
+
+1 是丑数。
+n 不超过1690。
+注意：本题与主站 264 题相同：
+
+````
+
+**思路**
+
+- 每个丑数一定可以由较小的丑数x2，或者x3，或者x5得到。
+- 如果我们求的是无穷多个丑数，那么每个丑数，都会生成3个对应较大的丑数，每个丑数都有3次机会
+- 我们用3个指针表示每个丑数生成较大丑数的机会。ptrI 表示当前 用自身值乘以I生成新丑数的丑数下标。显然，3个指针都是从1开始递增，每个生成丑数都有3次机会
+- 做题的话理解到上面就可以了，但深究还有1个细节：2，3，5是互质的。所以每个数乘以2，乘以3，乘以5，得到的数不会相同。并且，对于任意的￥x,y,z \in N+, 2^x,3^y,5^z$两两之间不可能相等，易证。
+
+
+
+```java
+class Solution {
+   public int nthUglyNumber(int n) {
+       int [] dp = new int[n+1];
+       dp[1]=1;
+       //ptrI表示上一个还未使用质因子I求新丑数的下标
+       int ptr2=1, ptr3=1,ptr5=1;
+       for(int i=2;i<=n;i++){
+           dp[i] = minOf3(dp[ptr2]*2,dp[ptr3]*3,dp[ptr5]*5);
+           if(dp[i]==dp[ptr2]*2) ptr2++;
+           if(dp[i]==dp[ptr3]*3) ptr3++;
+           if(dp[i]==dp[ptr5]*5) ptr5++;
+       }
+       return dp[n];
+
+    }
+    private int minOf3(int a,int b, int c){
+        return Math.min(Math.min(a,b),c);
+    }
+   
+}
+```
+
+
+
+### *[剑指 Offer 60. n个骰子的点数](https://leetcode-cn.com/problems/nge-tou-zi-de-dian-shu-lcof/)
+
+````text
+把n个骰子扔在地上，所有骰子朝上一面的点数之和为s。输入n，打印出s的所有可能的值出现的概率。
+
+你需要用一个浮点数数组返回答案，其中第 i 个元素代表这 n 个骰子所能掷出的点数集合中第 i 小的那个的概率。
+
+示例 1:
+
+输入: 1
+输出: [0.16667,0.16667,0.16667,0.16667,0.16667,0.16667]
+示例 2:
+
+````
+
+````java
+class Solution {
+ private int MAX_VALUE = 6;
+    public double[] dicesProbability(int n) {
+        if(n <1) return null;
+
+        int[][] count = new int[2][MAX_VALUE*n+1];
+
+        int flag=0;//flag 用来控制 交替读写 点数统计数组count
+        //抛第一个筛子
+        for(int i=1;i<=MAX_VALUE;i++) count[0][i] = 1;
+
+        //抛剩下的骰子
+        for(int k=2;k<=n;k++){
+            for(int i=0;i<k;i++) count[1-flag][i]=0;//待写数组清0
+
+            for(int i=k;i<=MAX_VALUE*k;i++){ //rang(i):本轮摇完色子需更新的点数范围；
+                count[1-flag][i]=0; //同样是为了待写数组清0；
+                for(int j=1;j<=i && j<=MAX_VALUE;j++){ //j<=i 做越界控制
+                    count[1-flag][i] += count[flag][i-j];//点数和x出现的次数等于上一轮x-1，x-2,..,x-j,...,x-6出现的点数之和
+                }
+            }
+            flag = 1-flag;
+        }
+        //用古典概型求概率，先计算抛n个骰子共多少种排列(可以理解为共多少种可能情况，count最后的结果可以看作是某种可能次数)
+        double total = Math.pow(MAX_VALUE,n);
+        double[] res = new double[(MAX_VALUE-1)*n+1];
+        for(int i=n;i<count[flag].length;i++){
+            res[i-n] = count[flag][i]/total;
+        }
+        return res;
+
+    }
+}
+````
+
+
+
 
 
 
@@ -2831,6 +3009,152 @@ class Solution {
 ### [剑指 Offer 33. 二叉搜索树的后序遍历序列](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
 
 - done
+
+### *[剑指 Offer 17. 打印从1到最大的n位数](https://leetcode-cn.com/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/)
+
+- 考虑大数
+
+  - 用字符数组存储
+  - 方法一：在数组上模拟加法
+  - 方法二：看作求全排列，递归求解
+  - 两个细节
+    - 因为用数组模拟，取结果时去掉前导无效‘0’
+    - 用方法一，如何快速O(1)内，判断加法结束，e.g., n=3,加法后得数1000时结束。
+
+  ````java
+  package SwordOf.DivideAndConquerAlgorithm;
+  
+  import org.junit.Test;
+  
+  import javax.print.attribute.standard.NumberUp;
+  
+  public class PrintNumbers {
+      /*考虑大数的情况*/
+      /*方法1：字符串模拟加法的做法*/
+      /*方法2：转换成全排列来做*/
+      /*因为考虑大数的情况，将数字转化在字符串数组,所以打印/存储的时候，需要去掉前导0*/
+      private String[] res;
+      private int cou = 0;
+  
+      public String[] printNumbers(int n) {
+          char[] number = new char[n];
+          res = new String[(int) Math.pow(10, n) - 1];
+          allPermutation(number, 0, n);
+          return res;
+  
+      }
+  
+      private void allPermutation(char[] number, int index, int n) {
+          if (index == n) {
+              printNum(number);
+              return;
+          }
+          for (int i = 0; i < 10; i++) {
+              number[index] = (char) (i + '0');
+              allPermutation(number, index + 1, n);
+          }
+      }
+  
+      private void printNum(char[] number) {
+          StringBuilder sb = new StringBuilder();
+          boolean allZero = true;
+          boolean invalidZeroIgnore = true;
+          for (int i = 0; i < number.length; i++) {
+              if (invalidZeroIgnore && number[i] != '0') {
+                  invalidZeroIgnore = false;
+                  sb.append(number[i]);
+                  allZero = false;
+                  continue;
+              }
+              if(!invalidZeroIgnore)  sb.append(number[i]);
+          }
+          if (allZero == false) {
+              res[cou] = sb.toString();
+              cou++;
+          }else return;
+      }
+  
+      @Test
+      public void test() {
+          int n = 2;
+          String[] res = printNumbers(n);
+          for (String e : res
+               ) {
+              System.out.println(e);
+          }
+      }
+  
+  }
+  
+  ````
+
+
+### *[剑指 Offer 51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
+
+思路一：两层循环，$O(logN)$
+
+思路二：基于归并排序的过程，累加逆序对数量
+
+- 理解归并过程中，逆序对贡献度的计算方法
+- 归并算法
+
+![OJcoding.drawio](mdPics/OJcoding.drawio-1640400526180.png)
+
+````java
+package SwordOf.DivideAndConquerAlgorithm;
+
+import org.junit.Test;
+
+
+
+public class ReversePairs {
+
+    public int reversePairs(int[] nums) {
+        if(nums.length==0 || nums==null) return 0;
+        return reverseProcess(nums,0,nums.length-1);
+    }
+
+    private int reverseProcess(int[] nums,int start,int end){
+        if(start == end) return 0;
+        int mid = (start+end)/2;
+        int left = start,right=mid+1;//分为[left,mid][mid+1,end]
+        int res = reverseProcess(nums,start,mid)+reverseProcess(nums,mid+1,end);
+
+        int[] temArr = new int[end-start+1];
+        int ptr=0,reverseContribute=0;
+        while(left<=mid && right<=end){
+            if(nums[right]<nums[left]){
+                reverseContribute = mid-left+1;
+                res+= reverseContribute;
+                temArr[ptr++] = nums[right++];
+            }else if(nums[right]>nums[left]){
+                temArr[ptr++] = nums[left++];
+            }else{
+                temArr[ptr++] = nums[left++];
+            }
+        }
+        while(left <= mid) temArr[ptr++] = nums[left++];
+        while(right<= end) temArr[ptr++] = nums[right++];
+        for(int i=start;i<=end;i++){
+            nums[i] = temArr[i-start];
+        }
+        return res;
+
+    }
+
+    @Test
+    public void test(){
+        int[] nums = new int[]{7,6,5,4};
+        int res = reversePairs(nums);
+        System.out.println(res);
+    }
+}
+
+````
+
+
+
+
 
 
 
@@ -3215,7 +3539,130 @@ class Solution {
 链接：https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/solution/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-by-lee/
 来源：力扣（LeetCode）
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+    
 ````
+
+### *[剑指 Offer 43. 1～n 整数中 1 出现的次数](https://leetcode-cn.com/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/)
+
+````java
+输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+
+例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
+````
+
+- 推导出每一数位1出现的次数计算公式
+
+![image-20211228224102585](mdPics/image-20211228224102585.png)
+
+````java
+//mys:
+public int countDigitOne(int n) {
+        int k = 0;
+        int res = 0;
+
+        while(Math.pow(10.0,k)<=n){
+            res+=Math.floor(n/Math.pow(10,k+1))*Math.pow(10,k);
+            res+=Math.min(Math.max(n%Math.pow(10.0,k+1)-Math.pow(10.0,k)+1,0),Math.pow(10.0,k));
+            k++;
+        }
+//        res+=Math.min(Math.max(n%Math.pow(10.0,k+1)-Math.pow(10.0,k)+1,0),Math.pow(10.0,k));
+        return res;
+
+    }
+
+class Solution {
+    public int countDigitOne(int n) {
+        // mulk 表示 10^k
+        // 在下面的代码中，可以发现 k 并没有被直接使用到（都是使用 10^k）
+        // 但为了让代码看起来更加直观，这里保留了 k
+        long mulk = 1;
+        int ans = 0;
+        for (int k = 0; n >= mulk; ++k) {
+            ans += (n / (mulk * 10)) * mulk + Math.min(Math.max(n % (mulk * 10) - mulk + 1, 0), mulk);
+            mulk *= 10;
+        }
+        return ans;
+    }
+}
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/solution/1n-zheng-shu-zhong-1-chu-xian-de-ci-shu-umaj8/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+````
+
+### [剑指 Offer 44. 数字序列中某一位的数字](https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/)
+
+- done
+
+  ````text
+  数字以0123456789101112131415…的格式序列化到一个字符序列中。在这个序列中，第5位（从下标0开始计数）是5，第13位是1，第19位是4，等等。
+  
+  请写一个函数，求任意第n位对应的数字。
+  
+  来源：力扣（LeetCode）
+  链接：https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof
+  著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+  ````
+
+  ​	![image-20211229113910940](mdPics/image-20211229113910940.png)
+
+  ````java
+  package SwordOf.math;
+  
+  import org.junit.Test;
+  
+  public class FindNthDigit {
+      public int findNthDigit(int n) {
+          int k=1,record = n;
+          int resNum=0,resDigit = 0;
+  
+  
+          while(Math.pow(10,k)*k<=n){
+               n-=(Math.pow(10,k)- (k-1==0?0:Math.pow(10,k-1)))*k;
+              k++;
+          }
+          int couDigit = n%k;
+          int couNum = n/k;
+          int base = k==1?0:(int)Math.pow(10,k-1);
+          resNum = base+couNum;
+          String resNumStr = String.valueOf(resNum);
+          resDigit = resNumStr.charAt(couDigit)-'0';
+          return resDigit;
+      }
+      @Test
+      public void test(){
+          int n=1000;
+          int res = findNthDigit(n);
+          System.out.println(res);
+      }
+  }
+  //2
+  class Solution {
+      public int findNthDigit(int n) {
+          int digit = 1;
+          long start = 1;
+          long count = 9;
+          while (n > count) { // 1.
+              n -= count;
+              digit += 1;
+              start *= 10;
+              count = digit * start * 9;
+          }
+          long num = start + (n - 1) / digit; // 2.
+          return Long.toString(num).charAt((n - 1) % digit) - '0'; // 3.
+      }
+  }
+  
+  作者：jyd
+  链接：https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/solution/mian-shi-ti-44-shu-zi-xu-lie-zhong-mou-yi-wei-de-6/
+  来源：力扣（LeetCode）
+  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+  ````
+
+  
+
+
 
 ## 模拟
 
