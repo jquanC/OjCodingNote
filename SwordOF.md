@@ -61,7 +61,7 @@ public class CQueue {
 
 **复杂度**
 
-- **时间复杂度是：$O(1)$**，插入显然是, 对于删除队尾的操作，也是O（1）.**每个元素只需要进入，弹出栈2一次，均摊分析可证**、
+- **时间复杂度是：$O(1)$**，插入显然是, 对于删除队尾的操作，也是O（1）.**每个元素只需要进入，弹出栈2一次，均摊分析可证**
 
 
 
@@ -145,6 +145,31 @@ public class MinStack {
  * int param_3 = obj.top();
  * int param_4 = obj.min();
  */
+
+//更高效--辅助栈并不用每次都压，也不用每次都弹
+class MinStack {
+    Stack<Integer> A, B;
+    public MinStack() {
+        A = new Stack<>();
+        B = new Stack<>();
+    }
+    public void push(int x) {
+        A.add(x);
+        if(B.empty() || B.peek() >= x)
+            B.add(x);
+    }
+    public void pop() {
+        if(A.pop().equals(B.peek()))
+            B.pop();
+    }
+    public int top() {
+        return A.peek();
+    }
+    public int min() {
+        return B.peek();
+    }
+}
+
 
 ````
 
@@ -388,6 +413,7 @@ public class reverseListRecursionSo {
 题目的关键是如何copy random指针，因为random指针是随机的
 
 - 我的解法，两个HashMap<Node,id> Hash<id,Node>来维护这个关系，$O(n),O(n)$ ,比较常规的思路
+  - 等价于HashMap<Node,Node>，搞复杂了
 - 参考解1：显然适合用回溯（递归）做，到最深处时，所有的结点都已经被复制出来的；整个过程，将next节点和random节点的拷贝操作相互独立。用hashmap<Node,Node>维护原节点和copy节点的关系；$O(n),O()$
 - 参考解2：巧妙的解法$O(n),O(1)$
   - 参考解1需要使用哈希表记录每一个节点对应新节点的创建情况，可以使用一个小技巧来省去哈希表的空间
@@ -522,7 +548,7 @@ class Solution {
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 ````
 
-### [剑指 Offer 18. 删除链表的节点](https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
+### [剑指 Offery6 18. 删除链表的节点](https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
 
 如果有结点的指针，如何实现$O(1)$的删除？
 
@@ -735,7 +761,8 @@ public class FindRepeatNumber {
                 ans = nums[i];
                 break;
             } else {
-                /*如果目的躺着的不是正确的函数，就一直发送给它;做法是和当前i位置的数交换
+                /*这里必须要用while循环，想想为什么？
+                如果目的躺着的不是正确的函数，就一直发送给它;做法是和当前i位置的数交换
                 * 终止挑战是 nums[i] = i ; nums[nums[i]] = nums[i]
                 * for循环进入下一步*/
                 while (nums[nums[i]] != nums[i]) {
@@ -800,9 +827,9 @@ public class SearchSortCount {
         if (nums.length == 0) return -1;
         int left = 0, right = nums.length - 1, mid = -1;
         while (left < right) {
-            mid = (left + right) / 2 + 1;
+            mid = (left + right) / 2 + 1;//eg， left=3,right=4,nums[3] = target的情况
             if (nums[mid] == target) {
-                left = mid;
+                left = mid;//为了尽可能向右
             } else if (nums[mid] < target) {
                 left = mid + 1;
             } else {
@@ -819,10 +846,10 @@ public class SearchSortCount {
     public int leftMaxBinarySearch(int[] nums, int target) {
         if (nums.length == 0) return -1;
         int left = 0, right = nums.length - 1, mid = 0;
-        while (left < right) {
+        while (left < right) { //eg， left=3,right=4,nums[3] = target的情况
             mid = (left + right) / 2;
             if (nums[mid] == target) {
-                right = mid;
+                right = mid;//是right = mid ,为了尽可能向左
             } else if (nums[mid] < target) {
                 left = mid + 1;
             } else {
@@ -935,7 +962,7 @@ public class SearchSortCount {
 思路
 
 - 我也想到了二分，也想到了通过元素下标与值的关系，不断二分缩小查找区间，但是代码没有一个大佬写的整洁
-- 
+- ![image-20220102113437198](mdPics/image-20220102113437198.png)
 
 <img src="mdPics/image-20211030094451562.png" alt="image-20211030094451562" style="zoom:80%;" />
 
@@ -1622,6 +1649,54 @@ public class PathSum {
   - 递归的终止条件
 
   ````java
+  
+  /*官方解更好*/
+  
+  /*
+  // Definition for a Node.
+  class Node {
+      public int val;
+      public Node left;
+      public Node right;
+  
+      public Node() {}
+  
+      public Node(int _val) {
+          val = _val;
+      }
+  
+      public Node(int _val,Node _left,Node _right) {
+          val = _val;
+          left = _left;
+          right = _right;
+      }
+  };
+  */
+  class Solution {
+      Node head, pre;
+  
+      public Node treeToDoublyList(Node root) {
+          if(root == null) return null;
+          inOrderDfs(root);
+          head.left = pre;
+          pre.right = head;
+          return head;
+  
+      }
+      private void inOrderDfs(Node cur){
+          if(cur == null) return;
+          if(cur.left!=null) inOrderDfs(cur.left);
+          if(pre!=null) pre.right = cur;
+          else head = cur;
+          cur.left = pre;
+          pre = cur;
+          if(cur.right!=null) inOrderDfs(cur.right);
+  
+      }
+     
+  }
+  
+  
   package SwordOf.Search.Tree;
   
   
@@ -1648,7 +1723,7 @@ public class PathSum {
           if(root.left!=null){
               pHead = treeToDoublyList(root.left);
               pHead.left.right = root;
-              root.left = pHead.left;
+            root.left = pHead.left;
               root.right = pHead;
               pHead.left = root;
           }else{
@@ -1696,7 +1771,7 @@ public class PathSum {
   }
   
   ````
-
+  
   ![image-20211119113407948](mdPics/image-20211119113407948.png)
 
 ### [剑指 Offer 55 - I. 二叉树的深度](https://leetcode-cn.com/problems/er-cha-shu-de-shen-du-lcof/)
@@ -1733,6 +1808,25 @@ public class IsBalanced {
         }
     }
 
+    /*第二遍也是自定向上，但是代码不够美*/
+    class Solution {
+    boolean res = true;
+    public boolean isBalanced(TreeNode root) {
+        depthDfs(root);
+        return res;
+    }
+    public int depthDfs(TreeNode root){
+        int lDepth = 0,rDepth =0;
+        if(root == null) return 0;
+        if(root.left !=null ) lDepth =  depthDfs(root.left);
+        if(root.right!= null) rDepth = depthDfs(root.right);
+
+        if(Math.abs( lDepth-rDepth )>1){
+            res = false;
+        }
+        return Math.max(lDepth,rDepth)+1;
+    }
+}
     /*
     自顶向下，复杂度更高
     public boolean isBalanced(TreeNode root) {
@@ -1784,6 +1878,7 @@ public class IsBalanced {
 - 对于空孩子，用一个标识符来标识，比如"$", 这样只需要对树做一次遍历就可以缺定树的构成（满二叉树，一个萝卜一个坑）。
 - 每个结点值可能是负数，以及几位数不缺定，因为要序列化为字符串，所以每个值都需要加入一个分隔标识符，方便后面的反序列化，比如“，”
 - 还有个小细节，序列化字符串最后是以“，”结尾，用split分割后String数组最后应该有一个空元素“”, 这里不用管。因为在遇到之前，递归建树已经终止了。
+- 字符串比较内容 equals ！
 
 ````java
 package SwordOf.Search.Recurse;
@@ -1884,7 +1979,7 @@ public class Exchange {
 
 ````
 
-### *[剑指 Offer 45. 把数组排成最小的数](https://leetcode-cn.com/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/)
+### *[剑指 Offer 45. 把数组排成最小/的数](https://leetcode-cn.com/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/)
 
 - done, but not the best way
 - “统一的比较规则”
@@ -2178,6 +2273,55 @@ B是A的子结构， 即 A中有出现和B相同的结构和节点值。
 - 关于书中提示的，关于浮点值的判断，无法用==，因为double 和 float 都是有精度缺失。了解一下
 
 ````java
+//SECOND
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    //遍历A 将A中有Broot值的结点，加入一个待判定检验列表； 因为题目没有说明节点值是否可能相同
+    boolean res;
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if(B == null) return false;
+
+        res = false;
+        dfs(A,B);
+        return res;
+
+
+    }
+    private void dfs(TreeNode root,TreeNode compareNode ){
+        if(root == null) return ;
+        if(root.val == compareNode.val) res = res || checkProcess(root,compareNode);
+        
+        //如果找到了子结果，提前结束递归
+        if(!res){
+            dfs(root.left,compareNode);
+            dfs(root.right,compareNode);
+        }
+        
+    }
+    private boolean checkProcess(TreeNode A,TreeNode B){
+        if(B == null) return true;
+        if(A == null) return false;
+        
+        boolean res = false;
+        if(A.val == B.val){
+            res = checkProcess(A.left,B.left) && checkProcess(A.right,B.right);
+        }else return false;
+
+        return res;
+    }
+}
+
+
+
+//FIRST
 package SwordOf.Tree.order;
 
 import Hot100.Medium.TreeNode;
@@ -2238,6 +2382,10 @@ public class IsSubStructure {
 }
 ````
 
+![image-20220111114236378](mdPics/image-20220111114236378.png)
+
+
+
 ### [剑指 Offer 28. 对称的二叉树](https://leetcode-cn.com/problems/dui-cheng-de-er-cha-shu-lcof/)
 
 请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
@@ -2262,6 +2410,10 @@ public class IsSubStructure {
 - 递归的思想
 
 ````java
+
+/**
+**此代码是构造一颗镜像树的代码，而不是判断一个数是否是镜像树**
+*/
 public TreeNode mirrorTree(TreeNode root) {
         if(root == null) return null;
         TreeNode mirrorRoot = new TreeNode(root.val);
@@ -2295,6 +2447,31 @@ public TreeNode mirrorTree(TreeNode root) {
 - 推导这个递推公式的思想：https://www.cnblogs.com/SYCstudio/p/7211050.html
 
 ````java
+
+/**
+常规做法，用这个就好
+**/
+class Solution {
+   int p = 1000000007;
+    public int fib(int n) {
+        if(n == 0) return 0;
+        if(n == 1) return 1;
+
+        int pre1 = 0;
+        int pre2 = 1;
+        int res = 0;
+        for(int i=2;i<=n;i++){
+            res = (pre1 + pre2)%p;;
+            pre1 = pre2;
+            pre2 = res;
+        }
+        return res;
+    }
+   
+}
+
+/*********/
+
 package SwordOf.dynamicPro;
 
 import org.junit.Test;
@@ -2499,6 +2676,29 @@ public class MaxProfit {
 - String.valueof():..
 
 ````java
+//second
+class Solution {
+    public int translateNum(int num) {
+        String numStr = String.valueOf(num);
+        char[] numArr = numStr.toCharArray();
+        int len = numArr.length;
+        int[] dp = new int[len];
+        dp[0] = 1;
+        for(int i=1; i<len; i++){
+
+            if(numArr[i-1]=='0'||numArr[i-1]>'2' || ( numArr[i-1] == '2' && numArr[i]>'5')) dp[i] = dp[i-1];
+            else if(i<=1){
+                dp[i] = 2;
+            }else{
+                dp[i] = dp[i-1]+dp[i-2];
+            }
+
+        }
+        return dp[len-1];
+    }
+}
+
+//first
 public int translateNum(int num) {
         /*返回 int参数的字符串 int形式。 */
         String str = String.valueOf(num);
@@ -2562,6 +2762,41 @@ public int translateNum(int num) {
   - $d>f(i-1):f(i)=f(i-1)+1$
 
 ````java
+//second
+
+class Solution {
+    /**
+    dp[i]：以arr[i]结尾的最长不包含重复字符的子字符串长度
+    set: */
+    public int lengthOfLongestSubstring(String s) {
+        if(s==null||s.length()==0) return 0;
+        
+        char[] arr = s.toCharArray();
+        int[] dp = new int[arr.length];
+        dp[0]=1;
+        HashMap<Character,Integer> map = new HashMap<>();
+        map.put(arr[0],0);
+        int res = 1;
+        for(int i=1;i<arr.length;i++){
+            if(!map.containsKey(arr[i])){
+                dp[i] = dp[i-1]+1;
+               
+            }else{
+                int prePos = map.get(arr[i]);
+                int len = i-prePos;
+                if(len>dp[i-1]+1) dp[i] = dp[i-1]+1;
+                else dp[i] = len; 
+            }
+            //更新位置 
+            map.put(arr[i],i);
+            if(dp[i]>res) res = dp[i];
+           
+        }
+        return res;
+    }
+}
+
+//first
 package SwordOf.dynamicPro;
 
 import org.junit.Test;
@@ -2656,10 +2891,48 @@ public class LengthOfLongestSubstring {
 来源：力扣（LeetCode）
 链接：https://leetcode-cn.com/problems/jian-sheng-zi-lcof
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
 ````
 
 - 可用动态规划做
 - 也可以用数学的方法做，贪心算法
+
+````java
+//自底向上动态规划
+class Solution {
+    /**
+    1.尽可能分成3的段
+    2.len = 4时，分成2*2；此时2*2 > 1*3
+    -----
+    dp[i]:长度为i的绳子剪后的可能最大乘积
+    dp[i] = max{dp[]*dp[]}
+    可以自底向上求解
+     */
+    public int cuttingRope(int n) {
+        if(n==2) return 1;
+        if(n==3) return 2;
+        if(n==4) return 4;
+
+        int[] dp = new int[n+1];
+        dp[1] = 1;       
+        dp[2] = 2;
+        dp[3] = 3;
+    
+        for(int i=4;i<=n;i++){
+            int max = Integer.MIN_VALUE;
+            for(int j=1;j<=i/2;j++){
+                int tem = dp[j]*dp[i-j];
+                if(tem>max) max = tem;
+            }
+            dp[i] = max;
+        }
+    return dp[n];
+    }
+}
+````
+
+
 
 
 
@@ -2675,7 +2948,49 @@ public class LengthOfLongestSubstring {
 
 注意rem, reminder返回值要用Long型作为过渡
 
+- 因为返回类似是int, 中间可能超过int 可表达最大值
+- 如果不取余，此题输入规模连 long型都会溢出
+
 ````java
+//second done
+class Solution {
+     /**
+    不能用动态规划了
+    因为中间过程的解去模，无法用与后续的大小判断
+    此时，应该从数学的角度入手，直入主题
+    n%3 = { 0,1,2} 
+     */
+    public int cuttingRope(int n) {
+        if(n==2) return 1;
+        if(n==3) return 2;
+        if(n==4) return 4;
+
+        int[] dp = new int[n+1];
+        dp[1] = 1;       
+        dp[2] = 2;
+        dp[3] = 3;
+
+        return (int)recurCut(n);
+    
+    }
+    private long recurCut(int n){
+        int p = 1000000007;
+        long res=0;
+        if(n ==0) return 1L;
+        if(n%3==0){
+            res = (3*recurCut(n-3))%p;
+
+        }else if(n%3 == 1){
+            res = (4*recurCut(n-4))%p;
+        }else{
+            res = (2*recurCut(n-2))%p;
+        }
+
+        return res;
+    }
+}
+
+
 //第一种
 public int cuttingRope(int n) {
         if (n <= 3) return n - 1;
@@ -2740,6 +3055,8 @@ public int cuttingRope(int n) {
 这道题在解的时候，容易陷入剪几段没说明，要列举很多情况的误区。实际上，外面定义f[m] 为长度为m下，剪成符合题意的段数下的最优解。动态转移方程，$f[m]=Max_{1<=i<=m/2}(f[i],f[m-i])$可以包含全部“剪法的情况”。**剪成任意多段（>2），肯定第一刀是剪成2段, 或者说剪得再碎，也能拼成两段**。所以这就是一个常见的dp问题。小细节是,因为至少要剪一刀,注意f[ ]的初始条件和特殊情况下的直接返回值，并不是对应的。
 
 
+
+//下面这是剪绳子I的：
 
 **贪心解**
 
@@ -2833,7 +3150,7 @@ public class IsMatch {
             else state2 = matchSup(sArr, pArr, sIndex, pIndex - 2);
 
             return state1 || state2;
-            //简化代码可以这么写
+            //简化代码可以这么写--错的，不能等价
 //            return matchSup(sArr,pArr,sIndex-1,pIndex-2)||matchSup(sArr,pArr,sIndex-1,pIndex)matchSup(sArr,pArr,sIndex,pIndex-2);
 
         } else {
