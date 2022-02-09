@@ -30,8 +30,10 @@ public class ReversePairs {
                 temArr[ptr++] = nums[left++];
             }
         }
+
         while(left <= mid) temArr[ptr++] = nums[left++];
         while(right<= end) temArr[ptr++] = nums[right++];
+
         for(int i=start;i<=end;i++){
             nums[i] = temArr[i-start];
         }

@@ -1357,14 +1357,22 @@ class Solution {
 为了穷举所有排列，每次都通过nextPermutation来判断是否存在下一个排列（时间复杂度O（n））, 全部排列由$n！$可能，所以这是最快的解法，时间复杂度 $O(n*(n!))$.代码的关键在于nextPermutation。简单回顾一下
 
 - 因为要穷举全部，初始状态对序列数组排序，呈升序状态。
+
 - 寻找符合要求的a[i], 再寻找符合要求的a[j]
+  
   - 能找到i, 说明至少存在nextPermutation，否则return false
+  
 - 找到a[i],a[j]后交换，此时a[i+1]....a[len-1] **一定是降序的**
+
 - 利用a[i+1]....a[len-1] **是降序**的性质，再O（n）内将其排序为升序。得到想要的nextPermutation状态。
 
 - 寻找a[i]a[j]过程中high level 层面的思想就是，找到两个数，一个在左边一个在右边，右边的数比左边的数大，交换他们得到的新序列比原来更大。我们希望还变大的幅度尽可能小。这就要求
   - 左边的数尽可能靠右
   - 右边的数尽可能小
+
+  补充2022.1.23：
+
+  - 
 
 ````java
 package SwordOf.Search.Recurse;
@@ -1435,7 +1443,7 @@ public class Permutation {
 
 ````
 
-
+<img src="mdPics/image-20220123145430775.png" alt="image-20220123145430775" style="zoom:80%;" />
 
 比较一般的做法是用回溯，使用标记数组一个个填空。
 
@@ -3196,7 +3204,7 @@ n 不超过1690。
 - 每个丑数一定可以由较小的丑数x2，或者x3，或者x5得到。
 - 如果我们求的是无穷多个丑数，那么每个丑数，都会生成3个对应较大的丑数，每个丑数都有3次机会
 - 我们用3个指针表示每个丑数生成较大丑数的机会。ptrI 表示当前 用自身值乘以I生成新丑数的丑数下标。显然，3个指针都是从1开始递增，每个生成丑数都有3次机会
-- 做题的话理解到上面就可以了，但深究还有1个细节：2，3，5是互质的。所以每个数乘以2，乘以3，乘以5，得到的数不会相同。并且，对于任意的￥x,y,z \in N+, 2^x,3^y,5^z$两两之间不可能相等，易证。
+- 做题的话理解到上面就可以了，但深究还有1个细节：2，3，5是互质的。所以每个数乘以2，乘以3，乘以5，得到的数不会相同。并且，对于任意的$x,y,z \in N+, 2^x,3^y,5^z$两两之间不可能相等，易证。
 
 
 
@@ -3290,6 +3298,10 @@ class Solution {
 
 ### [剑指 Offer 16. 数值的整数次方](https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/)
 
+![image-20220121103059164](mdPics/image-20220121103059164.png)
+
+- 题目给点数值范围具有迷惑性，实际会溢出。
+
 - 注意n是负数的处理，转为正数情况最后再求倒数
 - 最小负数转正数会溢出，用Long过度
 - 用快速二分时，可以用位运算优化除2，求余判断
@@ -3319,6 +3331,33 @@ class Solution {
 链接：https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/solution/mian-shi-ti-16-shu-zhi-de-zheng-shu-ci-fang-kuai-s/
 来源：力扣（LeetCode）
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+    
+   // my second
+    
+ class Solution {
+    public double myPow(double x, int n) {
+        if(x==1) return x ;
+        if(x==0) return 0;
+        if(n == 1) return x;
+        if(n== -1) return 1.0/x;
+        if(n==0) return 1;
+
+       
+        if(n %2 ==0){
+            double tem =  myPow(x,n/2);
+            return tem*tem;
+        }else{
+            if(n<0){
+                double tem2 = myPow(x,(n+1)/2);
+                 return tem2 * tem2*(1.0/x);
+            }else{
+                double tem2 = myPow(x,(n-1)/2);
+                return tem2*tem2*x;
+            }    
+        }
+        
+    }
+}
 ````
 
 
@@ -3404,7 +3443,6 @@ class Solution {
   }
   
   ````
-
 
 ### *[剑指 Offer 51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
 
@@ -3524,7 +3562,6 @@ public class ReversePairs {
 
 
 
-
 ### *[剑指 Offer 65. 不用加减乘除做加法](https://leetcode-cn.com/problems/bu-yong-jia-jian-cheng-chu-zuo-jia-fa-lcof/)
 
 - 从十进制的加法过程3步骤分析：先不考虑进位的加法，再考虑产生进位的值，再把两者相加
@@ -3537,8 +3574,8 @@ class Solution {
     public int add(int a, int b) {
         int sum,carry;
         do{
-            sum = a^b;
-            carry = (a&b)<<1;
+            sum = a^b; //符号位参与吗
+            carry = (a&b)<<1; 
             a = sum;
             b = carry;
         }while(carry!=0);
@@ -3576,9 +3613,10 @@ class Solution {
 
 **思路**
 
-- 利用异或的性质。如果题目改为，数组中只有1个数字不同，那么我们对数组中的数字累积异或，结果就是那个唯一不同的数。对于此题，题目变成了有两个异或的数。如果我们能够将他们分别分开，将原数组分成2个子数组，子数组中包含一个不同的数，以及两两相同的数，那么分别对子数组累计异或，就能找到这两个数了。
+- 利用异或的性质。如果题目改为，数组中只有1个数字不同，那么我们对数组中的数字累积异或，结果就是那个唯一不同的数。对于此题，题目变成了有两个异或的数。如果我们能够将他们分别分开，将原数组分成2个子数组，并且每个子数组中包含一个不同的数，以及两两相同的数，那么分别对子数组累计异或，就能找到这两个数了。
 - 我们可以对原数组累计异或，得到结果tem。 观察tem,寻找第一个不为0的二进制位（从右往左更方便，从左往右也可以）。
-- 相同的两个数，该位一定是相同的，一定会被分在同一边（*但相同的数不是平均分配到两个“逻辑子数组”的，要注意。取决这个数字该到底是0还是1*。但是两个相同数总是分在同一边，相与为0）。对于两个不同的数，因为该位结果为1，所以那两个不同的数，该位也是不同的。
+- **相同的两个数，该位一定是相同的。**一定会被分在同一边（*但相同的数不是平均分配到两个“逻辑子数组”的，要注意；既逻辑子数组长度不同。取决这个数字该到底是0还是1*。但是两个相同数总是分在同一边，相与为0）。对于两个不同的数，因为该位结果为1，所以那两个不同的数，该位也是不同的。
+- **相同的两个数，该位一定是相同的, 与tem相与，会有一样的结果**。我们可以借此特征将两个相同的数据分流到同一个逻辑子数组中。而两个不同的数，该位一定是不同的，于tem相与，会有不同的结果。我们可以借此特征将两个不相同的数据分流到不同的逻辑子数组中。
 - 所以，我们根据这个特点，逻辑上就可以把数组中的数全部按我们想要的分成两组了。该位为0的数，以及该位为1的数。
 
 ````java
@@ -3624,6 +3662,8 @@ class Solution {
 输出：1
 ````
 
+**note:**实际上，只需要修改求余数值 mmm ，即可实现解决 **除了一个数字以外，其余数字都出现 mmm 次** 的通用问题。
+
 **思路**
 
 - 如果一个数字出现3次，那么他的二进制表示的每一位也都出现3次。
@@ -3632,6 +3672,29 @@ class Solution {
 - 二进制的加权运算和十进制一样：result = (result<<1)+bit //乘2累加，注意移位运算符的时间复杂度很低
 
 ````java
+//second
+class Solution {
+    /**
+    注意 nums[i]是正数 */
+    public int singleNumber(int[] nums) {
+        int[] bitcou = new int[32];
+        for(int i=0;i<nums.length;i++){
+            int check = 1;
+            for(int j=0;j<31;j++){ //实际符号位不表示；
+                if( (nums[i] & check) !=0 ) bitcou[j]++; // 判断条件是 !=0 而非 == 1 ****!
+                check = check << 1;
+            }
+        }
+        int factor = 1;
+        int res=0;
+        for(int i=0;i<31;i++){
+            if(i!=0) factor*=2;
+            if(bitcou[i] %3 == 1) res = res+factor;
+        }
+        return res;
+    }
+}
+//first
 class Solution {
     public int singleNumber(int[] nums) {
         
@@ -3789,6 +3852,34 @@ public class MajorityElement {
   - 利用动态规划节约空间复杂度
 
   ````java
+  //second
+  class Solution {
+      public int[] constructArr(int[] a) {
+          int [] leftCur = new int [a.length];
+          int factor=1;
+          for(int i=0;i<a.length;i++){
+              factor *= a[i];
+              leftCur[i] = factor;
+          }
+          factor = 1;
+          for(int i=a.length-1;i>=0;i--){
+              if(i == a.length -1){
+                  leftCur[i] =  leftCur[i-1];
+                  
+              }else if( i == 0 ){
+                  leftCur[i] = factor;
+                  continue;
+              }else{
+                  leftCur[i] = leftCur[i-1]*factor;
+              }
+              factor *= a[i];
+          }
+        return leftCur;
+  
+      }
+  }
+  
+  //first
   class Solution {
       public int[] constructArr(int[] a) {
           if(a.length ==0) return new int[0];
@@ -3811,7 +3902,7 @@ public class MajorityElement {
       }
   }
   ````
-
+  
   ### [剑指 Offer 57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
   
   - done
@@ -3821,6 +3912,9 @@ public class MajorityElement {
 
 - 推导
 - <img src="mdPics/image-20211212120804624.png" alt="image-20211212120804624" style="zoom:80%;" />
+- 剑指的分析
+- <img src="mdPics/image-20220126200557687.png" alt="image-20220126200557687" style="zoom:80%;" />
+- ![image-20220127103700098](mdPics/image-20220127103700098.png)
 
 ````java
 class Solution {
@@ -3878,8 +3972,8 @@ public int countDigitOne(int n) {
         int res = 0;
 
         while(Math.pow(10.0,k)<=n){
-            res+=Math.floor(n/Math.pow(10,k+1))*Math.pow(10,k);
-            res+=Math.min(Math.max(n%Math.pow(10.0,k+1)-Math.pow(10.0,k)+1,0),Math.pow(10.0,k));
+            res+=Math.floor(n/Math.pow(10,k+1))*Math.pow(10,k);//完整循环部分;一定要用floor函数，因为结果在中间过程会被转换为double
+            res+=Math.min(Math.max(n%Math.pow(10.0,k+1)-Math.pow(10.0,k)+1,0),Math.pow(10.0,k));//不完整循环部分
             k++;
         }
 //        res+=Math.min(Math.max(n%Math.pow(10.0,k+1)-Math.pow(10.0,k)+1,0),Math.pow(10.0,k));
