@@ -39,5 +39,25 @@ public class TestOJ {
         int res = soNumSquare.numSquares(n);
         System.out.println(res);
     }
+    @Test
+    public void testStringBuilder(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("a");
+        sb.append("a");
+        sb.append("a");
+        sb.append("a");
+        String r = sb.substring(0,0);
+        String e = sb.substring(4,4);
+        System.out.println(r);
+        System.out.println(e);
+        String test = "aaaa";
+        String f = test.substring(0,0);
+        String g = test.substring(4,4);
+        System.out.println(f);
+        System.out.println(g);
+        System.out.println(f==null);
+        System.out.println(f.equals(""));
+
+    }
 
 }

@@ -375,7 +375,29 @@ public class reverseListSo {
 }
 
 
+/**迭代第二次*/
+class Solution {
+    //迭代做法，每个都摘下来，以头插的形式插入到新的链表中；
+    public ListNode reverseList(ListNode head) {
+        if(head == null || head.next == null) return head;
 
+        ListNode scan = head.next;
+        ListNode newHead = head;
+        newHead.next = null;
+        while(scan.next !=null){
+             ListNode tem = scan.next;
+             scan.next = newHead;
+             newHead = scan;
+             scan = tem;
+        }
+        scan.next  = newHead;
+        return scan;
+
+    }
+    
+}
+
+//递归第一次
 package SwordOf.list;
 
 import SwordOf.domain.ListNode;
@@ -394,6 +416,28 @@ public class reverseListRecursionSo {
     }
 }
 
+
+/**递归做法第二次*/
+class Solution {
+    ListNode newHead;
+    public ListNode reverseList(ListNode head) {
+        if(head ==null || head.next == null) return head;
+        recurReverse(head,head.next);
+        head.next = null;
+        return newHead;
+    
+    }
+    public void recurReverse(ListNode pre,ListNode cur){
+        if(cur.next !=null){
+            recurReverse(cur,cur.next);
+            cur.next = pre;
+
+        }else{
+            newHead = cur;
+            cur.next = pre;
+        }
+    }
+}
 ````
 
 ### *[剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
