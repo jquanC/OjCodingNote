@@ -3,11 +3,13 @@ package Blank;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        HashMap map = new HashMap();
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
         sc.nextLine();
