@@ -2,7 +2,9 @@ package test;
 
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 
 public class ABigTest {
@@ -39,5 +41,28 @@ public class ABigTest {
         valueB[2]='a';
         System.out.println("in swap a:"+a);
         System.out.println("in swap b:"+b);
+    }
+    @Test
+    public void test(){
+        int[] arr = new int[10];
+//        dfsPrint(arr,0);
+//        System.out.println(Arrays.toString(arr));
+        int a = 0;
+        dfsPrintBasicNum(a,0);
+        System.out.println(a);
+    }
+    public void dfsPrint(int[] arr,int step){
+        if(step ==10) return;
+        arr[step] = step;
+        System.out.println("step="+step+","+Arrays.toString(arr));
+        dfsPrint(arr,step+1);
+        System.out.println("step="+step+",after dfs return,a="+Arrays.toString(arr));
+    }
+    public void dfsPrintBasicNum(int a,int step){
+        if(step ==10) return;
+        a = step;
+        System.out.println("step="+step+","+a);
+        dfsPrintBasicNum(a,step+1);
+        System.out.println("step="+step+",after dfs return"+a);
     }
 }
