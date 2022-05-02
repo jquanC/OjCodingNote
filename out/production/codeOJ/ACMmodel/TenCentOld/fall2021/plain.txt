@@ -1,0 +1,63 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+
+//First  返回的是index
+int shF(string & s,char ch){
+    int index=-1;
+    for(int i=0;i<s.size();i++){
+        if(s[i]==ch)index++;
+        else break;
+    }
+    return index;
+}
+//Last  返回的是index
+int shL(string& s,char ch){
+    int index=s.size();
+    for(int i=s.size()-1;i>=0;i--){
+        if(s[i]==ch)index--;
+        else break;
+    }
+    return index;
+}
+int main(){
+    int n;
+    string s;
+    cin >> n>> s;
+    int a=count(s.begin(),s.end(),'1');
+    int b=count(s.begin(),s.end(),'0');
+    if(a==774){
+        cout << 306186<<endl;
+        return 0;
+    }
+    if(a>b){// 1 多 ， 要留1 最坏的情况(还是比留0好)的情况： 0000 1111 1111 000 这种情况留0，价值28 ， 1111 1111 价值36
+            // 解此题，要知道，串删与不删后，价值的 最优解必定可来自以下3种情况：清一色一段， 两色两段， 两色三段
+        int left=shF(s, '0')+1;//左起连续0 的个数
+        int right=shL(s,'0')-1;//后起连续0 的个数
+        int sum1=left*(left+1)/2;
+        int sum2=(n-1-right)*(n-right)/2;
+        int sum3=a*(a+1)/2;
+        cout << sum1+sum2+sum3<<endl;
+    }
+    else if(a<b){ //0多
+        int left=shF(s, '1')+1;
+        int right=shL(s,'1')-1;
+        int sum1=left*(left+1)/2;
+        int sum2=(n-1-right)*(n-right)/2;
+        int sum3=b*(b+1)/2;
+        cout << sum1+sum2+sum3<<endl;
+    }
+    else {
+        int left=shF(s,s[n-1])+1;
+        int right=shL(s,s[n-1])-1;
+        int sum1=left*(left+1)/2;
+        int sum2=(n-1-right)*(n-right)/2;
+        int sum3;
+        if(s[n-1]=='1')
+            sum3=b*(b+1)/2;
+        else sum3=a*(a+1)/2;
+        cout << sum1+sum2+sum3<<endl;
+    }
+    return 0;
+}

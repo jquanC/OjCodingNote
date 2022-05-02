@@ -23,27 +23,27 @@ public class TestGuide {
                 System.out.println(Thread.currentThread() + "waiting resource2");
 
                 //不释放resource1
-                synchronized(resource2){
-                    System.out.println(Thread.currentThread()+"get resources2");
+                synchronized (resource2) {
+                    System.out.println(Thread.currentThread() + "get resources2");
                 }
             }
 
         }
         ).start();
 
-        new Thread(()->{
-            synchronized(resource2){
-                System.out.println(Thread.currentThread()+"get resource2");
+        new Thread(() -> {
+            synchronized (resource2) {
+                System.out.println(Thread.currentThread() + "get resource2");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println(Thread.currentThread()+"waiting resource1");
+                System.out.println(Thread.currentThread() + "waiting resource1");
 
                 //不释放 resource2
-                synchronized(resource1){
-                    System.out.println(Thread.currentThread()+"get resource1");
+                synchronized (resource1) {
+                    System.out.println(Thread.currentThread() + "get resource1");
                 }
 
             }

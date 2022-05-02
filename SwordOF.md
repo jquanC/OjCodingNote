@@ -177,7 +177,7 @@ class MinStack {
 
 ### *[剑指 Offer 59 - I. 滑动窗口的最大值（单调队列！）](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/)
 
-- 我的解 每次建个k大小的堆
+- 我的解  每次建个k大小的堆          
 - $O(n)时间复杂度解法$：
   - 滑动窗口就像一个队列，我们维护以下性质，满足设计的队列是一个滑动窗口的“映射”：1 队列存储的是元素对应在nums数组的下标。且队列最左边对应的元素的值是元素中最大的。2 队列中的元素的值（下标），从小到大。所以这是一个单调队列，它的值是递增的，它的值（指下标）对应的数组元素的值的递减的。
   - 为什么要维护这样一个滑动窗口的映射队列：
@@ -658,8 +658,6 @@ public class MergeTwoLists {
 ### [剑指 Offer 52. 两个链表的第一个公共节点](https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/)
 
 - done
-
-
 
 ## 字符串
 
@@ -3387,7 +3385,7 @@ class Solution {
         if(n==0) return 1;
 
        
-        if(n %2 ==0){
+        if(n%2 ==0){
             double tem =  myPow(x,n/2);
             return tem*tem;
         }else{
@@ -3681,7 +3679,7 @@ class Solution {
             if((nums[i]&findSup) == 0 ) subNumRes1 ^= nums[i];
             if((nums[i]&findSup) == 1 ) subNumRes2 ^= nums[i];
             */
-            //注意nums[i]&findSup) != 0的反面，是那一位为1，不是整个数值为1，所以上面注释的写法得到的结果是不一定对的
+            //注意(nums[i]&findSup) != 0的反面，是那一位为1，不是整个数值为1，所以上面注释的写法得到的结果是不一定对的
             if((nums[i]&findSup) != 0 ) subNumRes1 ^= nums[i];
             else subNumRes2 ^= nums[i];
         }
@@ -3710,7 +3708,7 @@ class Solution {
 
 **思路**
 
-- 如果一个数字出现3次，那么他的二进制表示的每一位也都出现3次。
+- 如果一个数字出现3次，那么**他的二进制表示的每一位也都出现3次**。
 - 把每一位的数字和加起来，如果每一位的和都能被3整除，那么那个只出现一次的数字在该位的二进制数是0，反之是1 。
 - 注意：一个for循环的次数如果是固定的，那么它是 $O(1)$的
 - 二进制的加权运算和十进制一样：result = (result<<1)+bit //乘2累加，注意移位运算符的时间复杂度很低
@@ -4277,7 +4275,7 @@ https://www.acwing.com/problem/
 - 有的题目则并没有要求必须把背包装满
   - F[0...V] 均为0 //<u>F[ v ] 的含义知道</u>
 - 有的要求“恰好装满背包”时的最优解
-  -  除了 F[0]为0，其余F[1...V] 均为负无穷
+  -  **除了** F[0]为0，其余F[1...V] **均为负无穷**
   - ![image-20220403164305308](mdPics/image-20220403164305308.png)
 
 二维，01背包，不要求装满 和 要求恰好装满

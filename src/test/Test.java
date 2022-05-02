@@ -1,11 +1,30 @@
 package test;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Test {
     public static void main(String[] args) {
-        int[] original = new int[]{1,2,4,5,52,51,566,12};
-        int[] copyArr = Arrays.copyOfRange(original,0,original.length);
-        System.out.println(Arrays.toString(copyArr));
+//        System.out.println(testM());
+      
+            Scanner sc = new Scanner(System.in);
+            int n = sc.nextInt();
+            int m =sc.nextInt();
+            sc.nextLine();
+            int q = sc.nextInt();
+            System.out.println(n);
+            System.out.println(m);
+            System.out.println(q);
+
+
+    }
+    public static int testM(){
+        int i=0;
+        try{
+            i=6;
+        }finally {
+            i++;
+            return i;
+        }
     }
 }

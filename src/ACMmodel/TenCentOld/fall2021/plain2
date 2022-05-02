@@ -1,0 +1,47 @@
+def cal_sum(a, b, q, n):
+    # 等差乘等比数列的求和公式
+    A = a/(q-1)
+    B = (b-A)/(q-1)
+    return (A*n+B)*q**(n)-B
+
+def getCost(m, n):
+    # 剩余m件ssr，n件普通装备，抽取一件的期望为 E(i) = p2*(i+1)*p1^(i-1)
+    p1 = n/(m+n)
+    p2 = m/(m+n)
+    res = cal_sum(p2, p2, p1, 1000000000)
+    return res
+
+line = input().split()
+n, m = int(line[0]), int(line[1])
+res = 0
+for i in range(m, 0, -1):
+    res += getCost(i, n)
+print("%.2f" % res)
+//////////////
+
+#include <cinttypes>
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+using intl = int64_t;
+
+intl n, nums[100005];
+
+intl solve() {
+    intl cnt = 0;
+    vector<intl> v{nums[0]};
+    for (intl i = 1; i < n; i++) {
+        auto it = lower_bound(v.begin(), v.end(), nums[i]);
+        cnt += intl(v.end() - it) + (it != v.begin());
+        while (!v.empty() && v.back() > nums[i]) v.pop_back();
+        v.push_back(nums[i]);
+    }
+    return cnt;
+}
+
+int main() {
+    scanf("%" SCNd64, &n);
+    for (intl i = 0; i < n; i++) scanf("%" SCNd64, nums+i);
+    printf("%" PRId64 "\n", solve());
+}
