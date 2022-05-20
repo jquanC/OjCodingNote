@@ -4402,38 +4402,38 @@ $F[i,v] = max{F[i-1,v],F[i-1,v-k*ci]+k*wi}$
 全部代码
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
 /** 完全背包问题：每件物品有无限件 二维朴素做法 */
 public class CompletePack01 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V =sc.nextInt();
-        int[][] arr = new int[N+1][2];
-        for(int i=1;i<=N;i++){
-            arr[i][0] = sc.nextInt();//vi 体积
-            arr[i][1] = sc.nextInt(); //wi 价值
-            if(i!=N) sc.nextLine();
-        }
-
-        int[][] dp = new int[N+1][V+1];
-        //初始化为0，都不用初始化了
-
-        for(int i=1;i<=N;i++){
-            for(int j=1;j<=V;j++){
-                //该物品可能拿的件数
-                for(int k=0;k<=j/arr[i][0];k++){
-                    //体现的正是：F[i,v] = max{F[i-1,v-kCi]+kWi}
-                    //Math.max 的右边包含了全部情况，Math.max左边相当于记录最优解
-                  dp[i][j] =  Math.max(dp[i][j],dp[i-1][j-k*arr[i][0]]+k*arr[i][1]);
-                }
-            }
-        }
-        System.out.println(dp[N][V]);
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[N + 1][2];
+    for (int i = 1; i <= N; i++) {
+      arr[i][0] = sc.nextInt();//vi 体积
+      arr[i][1] = sc.nextInt(); //wi 价值
+      if (i != N) sc.nextLine();
     }
+
+    int[][] dp = new int[N + 1][V + 1];
+    //初始化为0，都不用初始化了
+
+    for (int i = 1; i <= N; i++) {
+      for (int j = 1; j <= V; j++) {
+        //该物品可能拿的件数
+        for (int k = 0; k <= j / arr[i][0]; k++) {
+          //体现的正是：F[i,v] = max{F[i-1,v-kCi]+kWi}
+          //Math.max 的右边包含了全部情况，Math.max左边相当于记录最优解
+          dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - k * arr[i][0]] + k * arr[i][1]);
+        }
+      }
+    }
+    System.out.println(dp[N][V]);
+  }
 }
 
 ````
@@ -4461,37 +4461,37 @@ for(int i=1;i<=N;i++){
 完整代码
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
 /** 完全背包问题：每件物品有无限件  一维做法 */
 public class CompletePack02 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V =sc.nextInt();
-        int[][] arr = new int[N+1][2];
-        for(int i=1;i<=N;i++){
-            arr[i][0] = sc.nextInt();//vi 体积
-            arr[i][1] = sc.nextInt(); //wi 价值
-            if(i!=N) sc.nextLine();
-        }
-
-        int[] F = new int[V+1];
-        //初始化为0，都不用初始化了
-
-        for(int i=1;i<=N;i++){
-            //理解此题解最重要的是理解：为什么v正向递增就可以
-            //01背包一维，v递减是为了保证，每次状态更新是从拿了 1 件该物品来的，在完全背包问题，没有件数的限制
-            for(int j=1;j<=V;j++){
-                if(j-arr[i][0]>=0){
-                    F[j] = Math.max(F[j],F[j-arr[i][0]]+arr[i][1]);
-                }
-            }
-        }
-        System.out.println(F[V]);
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[N + 1][2];
+    for (int i = 1; i <= N; i++) {
+      arr[i][0] = sc.nextInt();//vi 体积
+      arr[i][1] = sc.nextInt(); //wi 价值
+      if (i != N) sc.nextLine();
     }
+
+    int[] F = new int[V + 1];
+    //初始化为0，都不用初始化了
+
+    for (int i = 1; i <= N; i++) {
+      //理解此题解最重要的是理解：为什么v正向递增就可以
+      //01背包一维，v递减是为了保证，每次状态更新是从拿了 1 件该物品来的，在完全背包问题，没有件数的限制
+      for (int j = 1; j <= V; j++) {
+        if (j - arr[i][0] >= 0) {
+          F[j] = Math.max(F[j], F[j - arr[i][0]] + arr[i][1]);
+        }
+      }
+    }
+    System.out.println(F[V]);
+  }
 }
 
 ````
@@ -4507,7 +4507,7 @@ public class CompletePack02 {
 即 每件物品有一定是数量。朴素解法就和完全背包问题一样，注意物品数量上限就好
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
@@ -4520,28 +4520,28 @@ import java.util.Scanner;
 
  朴素解法， 和朴素完全背包问题一样，注意物品数量上界 */
 public class MultiPack01 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V =sc.nextInt();
-        int[][] arr = new int[N+1][3];
-        for(int i=1;i<=N;i++){
-            arr[i][0] = sc.nextInt();//vi 体积
-            arr[i][1] = sc.nextInt(); //wi 价值
-            arr[i][2] = sc.nextInt(); // si 数量
-            if(i!=N) sc.nextLine();
-        }
-        int[][] dp = new int[N+1][V+1];
-        for(int i=1;i<=N;i++){
-            for(int j=1;j<=V;j++){
-                for(int k=0;k<=arr[i][2];k++){
-                    if(j>=k*arr[i][0]) dp[i][j] = Math.max(dp[i][j],dp[i-1][j-k*arr[i][0]]+k*arr[i][1]);
-                }
-            }
-        }
-        System.out.println(dp[N][V]);
-
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[N + 1][3];
+    for (int i = 1; i <= N; i++) {
+      arr[i][0] = sc.nextInt();//vi 体积
+      arr[i][1] = sc.nextInt(); //wi 价值
+      arr[i][2] = sc.nextInt(); // si 数量
+      if (i != N) sc.nextLine();
     }
+    int[][] dp = new int[N + 1][V + 1];
+    for (int i = 1; i <= N; i++) {
+      for (int j = 1; j <= V; j++) {
+        for (int k = 0; k <= arr[i][2]; k++) {
+          if (j >= k * arr[i][0]) dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - k * arr[i][0]] + k * arr[i][1]);
+        }
+      }
+    }
+    System.out.println(dp[N][V]);
+
+  }
 }
 
 ````
@@ -4568,7 +4568,7 @@ public class MultiPack01 {
 代码：很多细节比较巧妙 开一个够大的数组，转化后的新件数用cnt计数； 用的是一维dp， F[V] 还是这么大；
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
@@ -4582,43 +4582,43 @@ import java.util.Scanner;
  二进制优化算法  转为 01 背包问题*/
 
 public class MultiPack02 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V =sc.nextInt();
-        int[][] arr = new int[12010][2];
-        int cnt = 1;//计数转为 0 1背包的index
-        for(int i=1;i<=N;i++){
-            int v = sc.nextInt();
-            int w = sc.nextInt();
-            int s = sc.nextInt();
-            for(int k=1;k<=s; k<<=1 ) { // k<<1 不对，要赋值
-                arr[cnt][0] = k * v;//vi 体积
-                arr[cnt][1] = k * w; //wi 价值
-                s-=k; // 是 s-k ! 并且，为什么s-k 是正确的?因为 2^k 大于 2^0 +..+2^k-1 之和
-                cnt++;
-            }
-            //s 恰好为0 也没关系，容许一些冗余状态
-            arr[cnt][0] = s * v;//vi 体积
-            arr[cnt][1] = s * w; //wi 价值
-            cnt++;//注意这里要 cnt++
-            if(i!=N) sc.nextLine();
-        }
-        int[] F = new int[V+1];
-
-        // 一维 0 1 背包
-        for(int i=1;i<cnt;i++){
-            for(int j=V;j>=arr[i][0];j--){
-                F[j] = Math.max(F[j], F[j-arr[i][0]]+arr[i][1]);
-            }
-        }
-
-        System.out.println(F[V]);
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[12010][2];
+    int cnt = 1;//计数转为 0 1背包的index
+    for (int i = 1; i <= N; i++) {
+      int v = sc.nextInt();
+      int w = sc.nextInt();
+      int s = sc.nextInt();
+      for (int k = 1; k <= s; k <<= 1) { // k<<1 不对，要赋值
+        arr[cnt][0] = k * v;//vi 体积
+        arr[cnt][1] = k * w; //wi 价值
+        s -= k; // 是 s-k ! 并且，为什么s-k 是正确的?因为 2^k 大于 2^0 +..+2^k-1 之和
+        cnt++;
+      }
+      //s 恰好为0 也没关系，容许一些冗余状态
+      arr[cnt][0] = s * v;//vi 体积
+      arr[cnt][1] = s * w; //wi 价值
+      cnt++;//注意这里要 cnt++
+      if (i != N) sc.nextLine();
     }
+    int[] F = new int[V + 1];
+
+    // 一维 0 1 背包
+    for (int i = 1; i < cnt; i++) {
+      for (int j = V; j >= arr[i][0]; j--) {
+        F[j] = Math.max(F[j], F[j - arr[i][0]] + arr[i][1]);
+      }
+    }
+
+    System.out.println(F[V]);
+  }
 }
-package Others.PackPro;
+package codefortopic.PackPro;
 
-import java.util.Scanner;
+        import java.util.Scanner;
 
 /**有 N 种物品和一个容量是 V 的背包。
 
@@ -4630,39 +4630,39 @@ import java.util.Scanner;
  二进制优化算法  转为 01 背包问题*/
 
 public class MultiPack02 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V =sc.nextInt();
-        int[][] arr = new int[12010][2];
-        int cnt = 1;//计数转为 0 1背包的index
-        for(int i=1;i<=N;i++){
-            int v = sc.nextInt();
-            int w = sc.nextInt();
-            int s = sc.nextInt();
-            for(int k=1;k<=s; k<<=1 ) { // k<<1 不对，要赋值
-                arr[cnt][0] = k * v;//vi 体积
-                arr[cnt][1] = k * w; //wi 价值
-                s-=k; // 是 s-k ! 并且，为什么s-k 是正确的?因为 2^k 大于 2^0 +..+2^k-1 之和
-                cnt++;
-            }
-            //s 恰好为0 也没关系，容许一些冗余状态
-            arr[cnt][0] = s * v;//vi 体积
-            arr[cnt][1] = s * w; //wi 价值
-            cnt++;//注意这里要 cnt++
-            if(i!=N) sc.nextLine();
-        }
-        int[] F = new int[V+1];
-
-        // 一维 0 1 背包
-        for(int i=1;i<cnt;i++){
-            for(int j=V;j>=arr[i][0];j--){
-                F[j] = Math.max(F[j], F[j-arr[i][0]]+arr[i][1]);
-            }
-        }
-
-        System.out.println(F[V]);
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[12010][2];
+    int cnt = 1;//计数转为 0 1背包的index
+    for (int i = 1; i <= N; i++) {
+      int v = sc.nextInt();
+      int w = sc.nextInt();
+      int s = sc.nextInt();
+      for (int k = 1; k <= s; k <<= 1) { // k<<1 不对，要赋值
+        arr[cnt][0] = k * v;//vi 体积
+        arr[cnt][1] = k * w; //wi 价值
+        s -= k; // 是 s-k ! 并且，为什么s-k 是正确的?因为 2^k 大于 2^0 +..+2^k-1 之和
+        cnt++;
+      }
+      //s 恰好为0 也没关系，容许一些冗余状态
+      arr[cnt][0] = s * v;//vi 体积
+      arr[cnt][1] = s * w; //wi 价值
+      cnt++;//注意这里要 cnt++
+      if (i != N) sc.nextLine();
     }
+    int[] F = new int[V + 1];
+
+    // 一维 0 1 背包
+    for (int i = 1; i < cnt; i++) {
+      for (int j = V; j >= arr[i][0]; j--) {
+        F[j] = Math.max(F[j], F[j - arr[i][0]] + arr[i][1]);
+      }
+    }
+
+    System.out.println(F[V]);
+  }
 }
 
 ````
@@ -4686,45 +4686,45 @@ public class MultiPack02 {
 **朴素解法**
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
 /** 混合背包问题 朴素解法 */
 public class MixPack01 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V =sc.nextInt();
-        int[][] arr = new int[N+1][3];
-        for(int i=1;i<=N;i++){
-            arr[i][0] = sc.nextInt();//vi 体积
-            arr[i][1] = sc.nextInt(); //wi 价值
-            arr[i][2] = sc.nextInt(); // si 数量： -1 表示0-1 ；0 表示无限 ；>0：表示该使用上限次数
-            if(i!=N) sc.nextLine();
-        }
-        int [][] dp = new int[N+1][V+1];
-
-        for(int i=1;i<=N;i++){
-            for(int j=1;j<=V;j++){
-                if(arr[i][2] == -1){
-                    if(j>=arr[i][0]) dp[i][j] = Math.max(dp[i-1][j],dp[i-1][j-arr[i][0]]+arr[i][1]);
-                    else dp[i][j] = dp[i-1][j];
-
-                }else if(arr[i][2]==0){
-                    for(int k=0;k<=j/arr[i][0];k++){
-                        dp[i][j] = Math.max(dp[i][j],dp[i-1][j-k*arr[i][0]]+k*arr[i][1]);
-                    }
-                }else{
-                    for(int k=0;k<=arr[i][2];k++){
-                        if(j>=k*arr[i][0])
-                        dp[i][j] = Math.max(dp[i][j],dp[i-1][j-k*arr[i][0]]+k*arr[i][1]);
-                    }
-                }
-            }
-        }
-        System.out.println(dp[N][V]);
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[N + 1][3];
+    for (int i = 1; i <= N; i++) {
+      arr[i][0] = sc.nextInt();//vi 体积
+      arr[i][1] = sc.nextInt(); //wi 价值
+      arr[i][2] = sc.nextInt(); // si 数量： -1 表示0-1 ；0 表示无限 ；>0：表示该使用上限次数
+      if (i != N) sc.nextLine();
     }
+    int[][] dp = new int[N + 1][V + 1];
+
+    for (int i = 1; i <= N; i++) {
+      for (int j = 1; j <= V; j++) {
+        if (arr[i][2] == -1) {
+          if (j >= arr[i][0]) dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - arr[i][0]] + arr[i][1]);
+          else dp[i][j] = dp[i - 1][j];
+
+        } else if (arr[i][2] == 0) {
+          for (int k = 0; k <= j / arr[i][0]; k++) {
+            dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - k * arr[i][0]] + k * arr[i][1]);
+          }
+        } else {
+          for (int k = 0; k <= arr[i][2]; k++) {
+            if (j >= k * arr[i][0])
+              dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - k * arr[i][0]] + k * arr[i][1]);
+          }
+        }
+      }
+    }
+    System.out.println(dp[N][V]);
+  }
 }
 ````
 
@@ -4734,7 +4734,7 @@ public class MixPack01 {
 - 多重转01
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
@@ -4742,58 +4742,58 @@ import java.util.Scanner;
  * 混合背包问题  一维dp 解法
  */
 public class MixPack02 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
-        int[][] arr = new int[100000][3];
-        int cnt = 1;
-        for (int i = 1; i <= N; i++) {
-            int v = sc.nextInt();
-            int w = sc.nextInt();
-            int s = sc.nextInt();
-            if (s == -1) {
-                arr[cnt][0] = v;
-                arr[cnt][1] = w;
-                arr[cnt][2] = s;//-1  01 背包
-                cnt++;
-            }
-            if (s == 0) { // 0  完全背包
-                s  = V/v ; //把完整背包转多重，统一到下面转成0 1
-            }
-            if (s > 0) { // >0 多重背包 要转 0 1 背包
-                for (int k = 1; k <= s; k <<= 1) {
-                    arr[cnt][0] = v * k;
-                    arr[cnt][1] = w * k;
-                    arr[cnt][2] = -1;
-                    s-=k;
-                    cnt++;
-                }
-                if (s > 0) {
-                    arr[cnt][0] = v*s;
-                    arr[cnt][1] = w*s;
-                    arr[cnt][2] = -1;
-                    cnt++;
-                }
-
-            }
-
-            if (i != N) sc.nextLine();
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[100000][3];
+    int cnt = 1;
+    for (int i = 1; i <= N; i++) {
+      int v = sc.nextInt();
+      int w = sc.nextInt();
+      int s = sc.nextInt();
+      if (s == -1) {
+        arr[cnt][0] = v;
+        arr[cnt][1] = w;
+        arr[cnt][2] = s;//-1  01 背包
+        cnt++;
+      }
+      if (s == 0) { // 0  完全背包
+        s = V / v; //把完整背包转多重，统一到下面转成0 1
+      }
+      if (s > 0) { // >0 多重背包 要转 0 1 背包
+        for (int k = 1; k <= s; k <<= 1) {
+          arr[cnt][0] = v * k;
+          arr[cnt][1] = w * k;
+          arr[cnt][2] = -1;
+          s -= k;
+          cnt++;
         }
-        int[] F = new int[V + 1];
-        for (int i = 1; i < cnt; i++) {
-
-            // 0 1 pack
-                for(int j=V;j>=1;j--){
-                    if(j>=arr[i][0])
-                    F[j] = Math.max(F[j],F[j-arr[i][0]]+arr[i][1]);
-                    else F[j] = F[j];
-                }
-
+        if (s > 0) {
+          arr[cnt][0] = v * s;
+          arr[cnt][1] = w * s;
+          arr[cnt][2] = -1;
+          cnt++;
         }
-        System.out.println(F[V]);
+
+      }
+
+      if (i != N) sc.nextLine();
+    }
+    int[] F = new int[V + 1];
+    for (int i = 1; i < cnt; i++) {
+
+      // 0 1 pack
+      for (int j = V; j >= 1; j--) {
+        if (j >= arr[i][0])
+          F[j] = Math.max(F[j], F[j - arr[i][0]] + arr[i][1]);
+        else F[j] = F[j];
+      }
 
     }
+    System.out.println(F[V]);
+
+  }
 }
 
 ````
@@ -4802,7 +4802,7 @@ public class MixPack02 {
 - 多重转01
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
@@ -4810,70 +4810,70 @@ import java.util.Scanner;
  * 混合背包问题  一维dp 解法
  */
 public class MixPack03 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
-        int[][] arr = new int[100000][3];
-        int cnt = 1;
-        for (int i = 1; i <= N; i++) {
-            int v = sc.nextInt();
-            int w = sc.nextInt();
-            int s = sc.nextInt();
-            if (s == -1) {
-                arr[cnt][0] = v;
-                arr[cnt][1] = w;
-                arr[cnt][2] = 1;//-1 改1 表示  01 背包
-                cnt++;
-            }
-            if (s == 0) { // 0  完全背包
-                arr[cnt][0] = v;
-                arr[cnt][1] = w;
-                arr[cnt][2] = 0;//0
-                cnt++;
-            }
-            if (s > 0) { // >0 多重背包 要转 0 1 背包
-                for (int k = 1; k <= s; k <<= 1) { // 乘以2 是<<1 , 不是<<2
-                    arr[cnt][0] = v * k;
-                    arr[cnt][1] = w * k;
-                    arr[cnt][2] = 1;
-                    s-=k;
-                    cnt++;
-                }
-                if (s > 0) {
-                    arr[cnt][0] = v*s;
-                    arr[cnt][1] = w*s;
-                    arr[cnt][2] = 1;
-                    cnt++;
-                }
-
-            }
-
-            if (i != N) sc.nextLine();
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int[][] arr = new int[100000][3];
+    int cnt = 1;
+    for (int i = 1; i <= N; i++) {
+      int v = sc.nextInt();
+      int w = sc.nextInt();
+      int s = sc.nextInt();
+      if (s == -1) {
+        arr[cnt][0] = v;
+        arr[cnt][1] = w;
+        arr[cnt][2] = 1;//-1 改1 表示  01 背包
+        cnt++;
+      }
+      if (s == 0) { // 0  完全背包
+        arr[cnt][0] = v;
+        arr[cnt][1] = w;
+        arr[cnt][2] = 0;//0
+        cnt++;
+      }
+      if (s > 0) { // >0 多重背包 要转 0 1 背包
+        for (int k = 1; k <= s; k <<= 1) { // 乘以2 是<<1 , 不是<<2
+          arr[cnt][0] = v * k;
+          arr[cnt][1] = w * k;
+          arr[cnt][2] = 1;
+          s -= k;
+          cnt++;
         }
-        int[] F = new int[V + 1];
-
-        for (int i = 1; i < cnt; i++) {
-            // 0 1 pack
-            if (arr[i][2] == 1) {
-                for(int j=V;j>=1;j--){
-                    if(j>=arr[i][0])
-                    F[j] = Math.max(F[j],F[j-arr[i][0]]+arr[i][1]);
-
-                }
-
-            } else { // 完全pack
-
-                for(int j=1;j<=V;j++){
-                    if(j>=arr[i][0])
-                    F[j] = Math.max(F[j],F[j-arr[i][0]]+arr[i][1]);
-
-                }
-            }
+        if (s > 0) {
+          arr[cnt][0] = v * s;
+          arr[cnt][1] = w * s;
+          arr[cnt][2] = 1;
+          cnt++;
         }
-        System.out.println(F[V]);
 
+      }
+
+      if (i != N) sc.nextLine();
     }
+    int[] F = new int[V + 1];
+
+    for (int i = 1; i < cnt; i++) {
+      // 0 1 pack
+      if (arr[i][2] == 1) {
+        for (int j = V; j >= 1; j--) {
+          if (j >= arr[i][0])
+            F[j] = Math.max(F[j], F[j - arr[i][0]] + arr[i][1]);
+
+        }
+
+      } else { // 完全pack
+
+        for (int j = 1; j <= V; j++) {
+          if (j >= arr[i][0])
+            F[j] = Math.max(F[j], F[j - arr[i][0]] + arr[i][1]);
+
+        }
+      }
+    }
+    System.out.println(F[V]);
+
+  }
 }
 
 ````
@@ -4884,40 +4884,38 @@ public class MixPack03 {
 
 0 1 背包，除了容量，再加一个 重量；正常做加一个维度就好了
 
-
-
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
 /**0 1 背包问题 除了容量， 增加了体积这一维度*/
 public class TwoDPack {
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
-        int M = sc.nextInt();
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    int M = sc.nextInt();
 
-        int [][] F = new int[V+1][M+1];
-        int[] v_arr = new int[N+1];
-        int[] m_arr = new int[N+1];
-        int[] w_arr = new int[N+1];
-        for(int i=1;i<=N;i++){
-            v_arr[i] = sc.nextInt();
-            m_arr[i] = sc.nextInt();
-            w_arr[i] = sc.nextInt();
-        }
-        for(int i=1;i<=N;i++){
-            for(int j=V;j>=v_arr[i];j--){
-                for(int t = M;t>=m_arr[i];t--){
-                    F[j][t] = Math.max(F[j][t],F[j-v_arr[i]][t-m_arr[i]]+w_arr[i]);
-                }
-            }
-        }
-        System.out.println(F[V][M]);
+    int[][] F = new int[V + 1][M + 1];
+    int[] v_arr = new int[N + 1];
+    int[] m_arr = new int[N + 1];
+    int[] w_arr = new int[N + 1];
+    for (int i = 1; i <= N; i++) {
+      v_arr[i] = sc.nextInt();
+      m_arr[i] = sc.nextInt();
+      w_arr[i] = sc.nextInt();
     }
+    for (int i = 1; i <= N; i++) {
+      for (int j = V; j >= v_arr[i]; j--) {
+        for (int t = M; t >= m_arr[i]; t--) {
+          F[j][t] = Math.max(F[j][t], F[j - v_arr[i]][t - m_arr[i]] + w_arr[i]);
+        }
+      }
+    }
+    System.out.println(F[V][M]);
+  }
 }
 
 ````
@@ -4929,40 +4927,40 @@ public class TwoDPack {
 01 背包， 分组 ，每组只能选一个
 
 ````java
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
 /**分组背包问题 ： 01 背包  每组有多个物品，每组可以取一个*/
 public class GroupPack {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V =sc.nextInt();
-        sc.nextLine();
-        int[][][] arr = new int[N+1][][];
-        for(int i=1;i<=N;i++){
-            int aGroupNum = sc.nextInt();
-            sc.nextLine();
-            arr[i] = new int[aGroupNum+1][2];
-            for(int j=1;j<=aGroupNum;j++){
-                arr[i][j][0] = sc.nextInt();
-                arr[i][j][1] = sc.nextInt();
-            }
-            if(i!=N) sc.nextLine();
-        }
-        int[] F = new int [V+1];
-        for(int i=1;i<=N;i++){
-            for(int j=V;j>=1;j--){
-
-                for(int t=1;t<arr[i].length;t++){ // < 不是 <= 哦
-                    if(j>=arr[i][t][0])
-                    F[j] = Math.max(F[j],F[j-arr[i][t][0]]+arr[i][t][1]);
-                }
-            }
-        }
-        System.out.println(F[V]);
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int N = sc.nextInt();
+    int V = sc.nextInt();
+    sc.nextLine();
+    int[][][] arr = new int[N + 1][][];
+    for (int i = 1; i <= N; i++) {
+      int aGroupNum = sc.nextInt();
+      sc.nextLine();
+      arr[i] = new int[aGroupNum + 1][2];
+      for (int j = 1; j <= aGroupNum; j++) {
+        arr[i][j][0] = sc.nextInt();
+        arr[i][j][1] = sc.nextInt();
+      }
+      if (i != N) sc.nextLine();
     }
+    int[] F = new int[V + 1];
+    for (int i = 1; i <= N; i++) {
+      for (int j = V; j >= 1; j--) {
+
+        for (int t = 1; t < arr[i].length; t++) { // < 不是 <= 哦
+          if (j >= arr[i][t][0])
+            F[j] = Math.max(F[j], F[j - arr[i][t][0]] + arr[i][t][1]);
+        }
+      }
+    }
+    System.out.println(F[V]);
+  }
 }
 
 ````
@@ -4981,13 +4979,87 @@ public class GroupPack {
 
 ### 泛化物品
 
-### 背包问题问法的变化
+### *背包问题问法的变化
 
 ![image-20220409121336414](mdPics/image-20220409121336414.png)
 
 可以用 G[i，v]  记录，=0表示从状态转移方程的第一项转移来，=1表示从第二项转移来；
 
-### 输出最优方案&输出字典序最小最优方案
+### *输出最优方案&输出字典序最小最优方案
+
+**重点**
+
+- 背包DP的时候，状态转移时有两种选择，组合起来看，在分析一个best[i] [j]的解时，最大可能有3种情况
+- 第i个物品选
+- 第i个物品不选
+- 第i个物品选或不选都可以
+
+**再回到这道题**
+
+- 如果是传统的做法，最后求出的最优解在 best[N] [V] ，回溯时，无法优先选择编号小的物品（因为是不确定的情况，编号大的物品能选也能不选时，没有确定的规则该选还是不该选，能够推到最后选到小的物品，此时就应该保存全部的选择，再选字典序小的）
+- 如果DP时是考虑编号N，N-1，....，1个物品，最后求出的最优解在best[1] [V] (=best[N] [V] ); 在回朔时，我们在编号小的物品能选也能不选时，贪心的选择就好了。这就是为什么这一题要倒着做DP的根本原因
+
+<img src="SwordOF.assets/image-20220520114532718.png" alt="image-20220520114532718" style="zoom:80%;" /> 
+
+````java
+package codefortopic.PackPro;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class PackSpecificScheme {
+    public static void main(String[] args) {
+
+        Scanner in = new Scanner(System.in);
+        int N = in.nextInt();
+        int V = in.nextInt();
+        int[][] best = new int[N + 2][V + 1];
+        int[] v = new int[N + 2];
+        int[] w = new int[N + 2];
+        for (int i = 1; i <= N; i++) {
+            v[i] = in.nextInt();
+            w[i] = in.nextInt();
+            if (i != N) in.nextLine();
+        }
+        for (int i = N; i >= 1; i--) {
+            for (int j = 0; j <= V; j++) {
+                if (j >= v[i]) //开始粗心写成 >了
+                    best[i][j] = Math.max(best[i + 1][j], best[i + 1][j - v[i]] + w[i]);
+                else best[i][j] = best[i + 1][j];
+            }
+        }
+        //best解在 best[1][V]中
+        List<Integer> ans = new ArrayList<>();
+        int resV = V;
+        //这个找答案也很巧妙，需要依次枚举的是N，而v是跳跃的，这样完成了对二位结果数据的查找
+        for (int i = 1; i <= N; i++) {
+
+            if ( resV-v[i]>=0 && best[i][resV] == best[i + 1][resV - v[i]] + w[i]) {
+                ans.add(i);
+                resV -= v[i];
+            }
+        }
+        for (int i = 0; i < ans.size(); i++) {
+            System.out.print(ans.get(i));
+            if(i != ans.size()) System.out.print(" ");
+        }
+        System.out.println();
+    }
+
+
+}
+
+
+````
+
+
+
+
+
+
+
+
 
 ### 求方案总数(不是最优方案数，什么都不选也是一个方案)
 
@@ -4995,6 +5067,146 @@ public class GroupPack {
 - 初始条件是 F[0, 0] = 1
 - 事实上，这样做可行的原因在于状态转移方程已经考察了所有可能的背包组成 方案
 
-### 最优方案的总数
 
-![image-20220409121831267](mdPics/image-20220409121831267.png)
+
+### *[最优方案的总数](https://www.acwing.com/problem/content/description/11/)
+
+````text
+有 N 件物品和一个容量是 V 的背包。每件物品只能使用一次。
+
+第 i 件物品的体积是 vi，价值是 wi。
+
+求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量，且总价值最大。
+
+输出 最优选法的方案数。注意答案可能很大，请输出答案模 109+7 的结果。
+
+输入格式
+第一行两个整数，N，V，用空格隔开，分别表示物品数量和背包容积。
+
+接下来有 N 行，每行两个整数 vi,wi，用空格隔开，分别表示第 i 件物品的体积和价值。
+
+输出格式
+输出一个整数，表示 方案数 模 109+7 的结果。
+
+数据范围
+0<N,V≤1000
+0<vi,wi≤1000
+输入样例
+4 5
+1 2
+2 4
+3 4
+4 6
+输出样例：
+2
+````
+
+分析：
+
+- 本题核心和易错的点在于，关于状态的定义，导致初始化得不同，以及求解的不同：
+- 一)算法一
+- 定义
+  - best[i] [j]: 表示从前i个物品中选择，**<u>体积就是</u>**j的价值
+  - scheme[i] [j] 表示表示从前i个物品种选择**<u>体积就是</u>**j的最大价值对应方案数
+- 初始化：
+  - best[0] [0]=0 其他，其他 i,j, best[i] [j] = - INF ; 
+  - scheme[0] [0] = 1; // 这也就解释了，为什么图1scheme中那么多中间非法状态
+  - 只能是scheme[0] [0]=1 ，scheme[0] [1-V]=0或者负无穷； 其他状态要和 best 状态保持一致，是非法的，因为是best的约束是恰好填满，其他是非法状态~
+- 求最后解时
+  - **累加** scheme[N] [0->V] 
+
+- 二)算法二
+- 定义
+  - best[i] [j]: 表示从前i个物品中选择，体积**<u>不大于</u>**j的价值
+  - scheme[i] [j] 表示表示从前i个物品种选择<u>**体积不大于**</u>j的最大价值对应方案数
+- 初始化：
+  - best[i] [j]=0 ,i , j 任意 ; 
+  - 必须scheme[0] [0-V] = 1; // （都必须填1）
+  - scheme[0-N] [0] = 1; // 可以不显示初始化，只要保证scheme[0] [0]=1, scheme[0-N] [0]在代码中会被填为1；
+- 求最后解时
+  - **直接输出** scheme[N] [V] , 所有状态的解已经递推并保存在这里
+
+<img src="SwordOF.assets/image-20220518164222313.png" alt="image-20220518164222313" style="zoom:67%;" />
+
+![image-20220518163953823](SwordOF.assets/image-20220518163953823.png)
+
+![image-20220518164838915](SwordOF.assets/image-20220518164838915.png)
+
+````java
+package codefortopic.PackPro;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class SchemeNum {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        int V = sc.nextInt();
+        sc.nextLine();
+        long[][] scheme = new long[N+1][V+1];
+        long[][] best = new long[N+1][V+1];
+        int[] v = new int[N+1];
+        int[] w = new int[N+1];
+        int P = (int) (1e9+7);
+
+        for(int i=1;i<=N;i++){
+            v[i] = sc.nextInt();
+            w[i] = sc.nextInt();
+            if(i!=N)
+            sc.nextLine();
+        }
+        //初始化一 算法一
+        /*for(int i=0;i<=N;i++){
+            scheme[i][0] = 1; //当v为0，不管考虑几件物品，best的解是什么都不选，所以scheme解为1
+        }*/
+       /* //初始化二 算法一
+        scheme[0][0] = 1;*/
+
+
+        //初始化三 算法二
+        for(int j=0;j<=V;j++){
+            scheme[0][j] = 1;
+        }
+        for(int i=0;i<=N;i++){ //当v为0，不管考虑几件物品，best的解是什么都不选，所以scheme解为1
+            scheme[i][0] = 1;
+        }
+
+        for(int i=1;i<=N;i++){
+            for(int j = 0; j<=V; j++){
+                if(j>=v[i])
+                    best[i][j] = Math.max(best[i-1][j],best[i-1][j-v[i]]+w[i]);
+                else best[i][j] = best[i-1][j];
+
+                scheme[i][j] = 0;
+                if(best[i][j] == best[i-1][j]){
+                    scheme[i][j] = scheme[i-1][j];
+                }
+                if(j>=v[i] && best[i][j] == best[i-1][j-v[i]]+w[i]){
+                    scheme[i][j] += scheme[i-1][j-v[i]];
+                }
+                if(scheme[i][j]>=P) scheme[i][j] %= P;
+            }
+        }
+
+
+        //算法一需要累加
+     /*   long ans = 0;
+        for(int j=0;j<=V;j++){ //枚举的是v， 而不能是物品件数
+            if(best[N][j] == best[N][V]){
+                ans += scheme[N][j];
+                if(ans>P) ans %=P;
+            }
+        }
+*/
+
+        //算法一
+//        System.out.println(ans);
+        //算法二
+        System.out.println(scheme[N][V]);
+    }
+}
+
+````
+

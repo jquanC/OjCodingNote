@@ -1,4 +1,4 @@
-package Others.PackPro;
+package codefortopic.PackPro;
 
 import java.util.Scanner;
 
