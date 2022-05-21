@@ -5061,11 +5061,159 @@ public class PackSpecificScheme {
 
 
 
-### 求方案总数(不是最优方案数，什么都不选也是一个方案)
+### *求方案总数(不是最优方案数，什么都不选也是一个方案)
 
-- 对于这类改变问法的问题，一般只需将状态转移方程中的 max 改成 sum 即可
+- 对于这类改变问法的问题，**一般只需将状态转移方程中的 max 改成 sum 即可**
+  - 因为每一个转移都代表一种解；
+
 - 初始条件是 F[0, 0] = 1
 - 事实上，这样做可行的原因在于状态转移方程已经考察了所有可能的背包组成 方案
+
+<img src="SwordOF.assets/image-20220521222729058.png" alt="image-20220521222729058" style="zoom:50%;" />
+
+一道好题求方案数的好题目
+
+[腾讯2018春编程题](https://www.nowcoder.com/question/next?pid=10611931&qid=161631&tid=56660735)
+
+小Q有X首长度为A的不同的歌和Y首长度为B的不同的歌，现在小Q想用这些歌组成一个总长度正好为K的歌单，每首歌最多只能在歌单中出现一次，在不考虑歌单内歌曲的先后顺序的情况下，请问有多少种组成歌单的方法。
+
+
+
+##### **输入描述:**
+
+```
+每个输入包含一个测试用例。
+每个测试用例的第一行包含一个整数，表示歌单的总长度K(1<=K<=1000)。
+接下来的一行包含四个正整数，分别表示歌的第一种长度A(A<=10)和数量X(X<=100)以及歌的第二种长度B(B<=10)和数量Y(Y<=100)。保证A不等于B。
+```
+
+##### **输出描述:**
+
+```
+输出一个整数,表示组成歌单的方法取模。因为答案可能会很大,输出对1000000007取模的结果。
+```
+
+##### **输入例子1:**
+
+```
+5
+2 3 3 3
+```
+
+##### **输出例子1:**
+
+```
+9
+```
+
+下面用2种方法求解该题，分别是1）背包问题求（恰好）装满背包的方案数，2）数学解法（怎么计算杨辉三角并用来计算组合数）
+
+**方法1-  01 背包**
+
+这道题第一个迷惑点，就是x个长度为a的歌，和y个长度为b歌，可以看作（x+y）种物品；需要对01背包理解很透彻才行
+
+第二，知道01背包求 **恰好装满**的过程解法；如果题目稍微改为选择歌曲组成的歌单总长不超过K的方案数，只需要修改初始化条件就行了；
+
+```java
+package codefortopic.PackPro;
+
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+
+import java.util.Scanner;
+
+
+public class SchemeNum {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int K = sc.nextInt();
+        sc.nextLine();
+        int a = sc.nextInt();
+        int x = sc.nextInt();
+        int b = sc.nextInt();
+        int y = sc.nextInt();
+        sc.nextLine();
+        int modV = (int)1e9+7;
+
+        long[] f = new long[K+1];
+        f[0] = 1;
+
+        for(int i=0;i<x;i++){
+            for(int j=K;j>=a;j--){
+                f[j] = (f[j] + f[j-a])%modV;
+            }
+        }
+        for(int i=0;i<y;i++){
+            for(int j=K;j>=b;j--){
+                f[j] = (f[j]+f[j-b])%modV;
+            }
+        }
+        System.out.println(f[K]);
+
+    }
+}
+```
+
+**方法二：用数学方法**
+
+```
+链接：https://www.nowcoder.com/questionTerminal/f3ab6fe72af34b71a2fd1d83304cbbb3
+来源：牛客网
+//我来解释一下介个吧，自己理解的。
+//对于K，如果从X个A中取出i个A之后的差刚好能够除以B，并且（K-A*i）/B结果小于B的个数Y的话，
+  ``// 那么就可以取。结果的个数为：组合C(X,i)*C(Y,（K-A*i）/B)
+  ``//此时算的C就是杨辉三角的计算方法。对于每一行n和每一列m来说，就是从n个中取出m个的组合个数。
+```
+
+很多代码细节，真是腾讯的特色
+
+````java
+package codefortopic.PackPro;
+
+
+import java.util.Scanner;
+
+
+public class SchemeNum {
+  
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int K = sc.nextInt();
+        sc.nextLine();
+        int a = sc.nextInt();
+        int x = sc.nextInt();
+        int b = sc.nextInt();
+        int y = sc.nextInt();
+        sc.nextLine();
+        int modV = (int)1e9+7;
+
+        //先计算杨辉三角
+        long[][] C_mn = new long[105][105];//第m行n列的值（m，n从0开始）!!! 题目给了上界 ; 要是long， 不然就只过60%
+//        for(int i=0;i<=x;i++) C_mn[i][0] = 1;
+
+        C_mn[0][0] = 1;
+        for(int i=1;i<105;i++){
+            C_mn[i][0] = 1;
+            for(int j=1;j<105;j++){
+                C_mn[i][j] = (C_mn[i-1][j-1]+C_mn[i-1][j])%modV;
+            }
+        }
+        long sum =0;
+        for(int i=0;i<=x;i++){
+            if( i*a<=K && (K-i*a)%b==0 && (K-i*a)/b <=y){ //不要忘了这两个个约束 i*a<=K && (K-i*a)/b <=y
+//                sum += (C_mn[x][i] * C_mn[y][(K-i*a)/b])%modV; //错的只过60% , 少了1次求模
+                sum = (sum + (C_mn[x][i] * C_mn[y][(K-i*a)/b])%modV)%modV;
+            }
+        }
+        System.out.println(sum);
+
+
+    }
+
+}
+
+````
+
+
 
 
 
