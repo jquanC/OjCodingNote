@@ -8,9 +8,11 @@ public class FunctionTest {
     }
     @Test
     public void test(){
-        int index =1 ;
-        print(index+1);
-        print(index+1);
-        print(index+1);
+        String test1 = new String("xxxxxx\n"+"yyyyy");
+        String test2 = new String("xxxxxx\\n"+"yyyyy");
+
+        System.out.println(test1);
+        System.out.println(test2);
+        System.out.println(test1+"\n"+test2);
     }
 }
