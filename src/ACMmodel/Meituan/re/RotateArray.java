@@ -12,6 +12,7 @@ import java.util.Scanner;
  *
  * 给出长度为n的数组，可以翻转任意一段，问翻转一段之后的数组最大子段和为多少
  * */
+
 public class RotateArray {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
