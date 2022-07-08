@@ -592,6 +592,49 @@ class Solution {
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 ````
 
+````java
+/*
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+*/
+//用一个HasmMap存每个结点本身<node.val,node>
+class Solution {
+    public Node copyRandomList(Node head) {
+        if(head == null ) return null;
+        HashMap<Node,Node> map = new HashMap<>();
+        Node scan = head;
+        while(scan !=null){
+            Node cur = new Node(scan.val);
+            map.put(scan,cur);
+            scan = scan.next;
+        }
+        scan = head;
+        while(scan!=null){
+            Node mapNode = map.get(scan);
+            mapNode.next = map.get(scan.next);
+            mapNode.random = map.get(scan.random);
+            scan = scan.next;
+        }
+        return map.get(head);
+
+    }
+}
+````
+
+![image-20220629211450079](SwordOF.assets/image-20220629211450079.png)
+
+
+
 ### [剑指 Offery6 18. 删除链表的节点](https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
 
 如果有结点的指针，如何实现$O(1)$的删除？
@@ -982,7 +1025,60 @@ public class SearchSortCount {
 
 ````
 
+````java
+class Solution {
+    //最左二分加最右二分
+    public int search(int[] nums, int target) {
+        
+        if(nums.length==0) return 0 ;
+        int r = rightMaxSearch(nums,target,0,nums.length-1);
+        int l = leftMaxSearch(nums,target,0,nums.length-1);
+        if(r==-1 || l ==-1) return 0 ;
+        else return r-l+1;
 
+    }
+    public int leftMaxSearch(int[] nums,int target,int start,int end){
+        if(start>end) return -1;
+
+        int mid = (start+end)/2;
+        if(nums[mid]<target){
+            return leftMaxSearch(nums,target,mid+1,end);
+        }else if(nums[mid]>target){ //>
+            return leftMaxSearch(nums,target,start,mid-1);
+        }else{
+            int test = leftMaxSearch(nums,target,start,mid-1);
+            if( test != -1){
+                return test;
+            }else{
+                return mid;
+            }
+        }
+
+    }
+    public int rightMaxSearch(int[] nums, int target,int start,int end){
+        if(start>end) return -1;
+ 
+    
+        int mid = (start+end)/2;
+        if(nums[mid] < target){
+            return rightMaxSearch(nums,target,mid+1,end);
+        }else if(nums[mid] > target){
+            return rightMaxSearch(nums,target,start,mid-1);   
+        }else{
+            int test = rightMaxSearch(nums,target,mid+1,end);
+             if( test != -1){
+                return test;
+            }else{
+                return mid;
+            }
+        }
+
+
+    }
+}
+````
+
+![image-20220630231235865](SwordOF.assets/image-20220630231235865.png)
 
 ### *[剑指 Offer 53 - II. 0～n-1中缺失的数字](https://leetcode-cn.com/problems/que-shi-de-shu-zi-lcof/)
 
@@ -1357,6 +1453,54 @@ public class MovingCount {
     }
 }
 
+````
+
+第二次做（0701）：
+
+- visited 数据记录走过没走过，为了避免重复走
+
+- check 检查的是能不能走，不一样
+
+````java
+class Solution {
+    /**暴搜判断 
+    * visited 数据记录走过没走过，为了避免重复走
+    * check 检查的是能不能走，不一样
+    * cou 全局记数变量
+    */
+    int cou = 0;
+    public int movingCount(int m, int n, int k) {
+        boolean[][] visited = new boolean[m][n];
+        search(0,0,m,n,k,visited);
+        return cou;
+
+    }
+    public boolean check(int x,int y,int m,int n,int k,boolean[][] visited){
+        if(x<0 || y<0 || x>=m || y>=n ||visited[x][y]==true ) return false;
+        int sum = 0;
+        while(x!=0){
+            sum += x%10;
+            x /= 10;
+        }
+        while(y!=0){
+            sum += y%10;
+            y /= 10;
+        }
+        return sum<=k ? true : false;
+
+    }
+    public void search(int x, int y,int m, int n,int k,boolean[][] visited){
+        if(!check(x,y,m,n,k,visited)){
+            return ;
+        }
+        visited[x][y] = true;
+        cou++;
+        search(x+1,y,m,n,k,visited);
+        search(x-1,y,m,n,k,visited);
+        search(x,y+1,m,n,k,visited);
+        search(x,y-1,m,n,k,visited);
+    }
+}
 ````
 
 
@@ -5366,3 +5510,102 @@ public class SchemeNum {
 
 
 
+#　每日一题
+
+## [20. 有效的括号](https://leetcode.cn/problems/valid-parentheses/)
+
+![image-20220703211640776](SwordOF.assets/image-20220703211640776.png)
+
+
+
+## **[1353. 最多可以参加的会议数目](https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended/)
+
+- 花了很多时间的一题
+
+  ````text
+  给你一个数组 events，其中 events[i] = [startDayi, endDayi] ，表示会议 i 开始于 startDayi ，结束于 endDayi 。
+  
+  你可以在满足 startDayi <= d <= endDayi 中的任意一天 d 参加会议 i 。注意，一天只能参加一个会议。
+  
+  请你返回你可以参加的 最大 会议数目。
+  
+  
+  ````
+
+  代码中几个关键：
+
+  - 最外循环 meetIndex 不是每次走一趟就递增的
+
+  - 最外循环两个判断条件 缺一不可
+
+  - 贪心的策略：
+
+    - 出队：
+
+      - 每次选择队列中结束时间最早的事件
+      - 过期时间--无法安排
+
+    - 进队：
+
+      - 只需要进队一次，贪心从开始时间早的选择就可以了-通过初始化排序实现
+
+      
+
+      ````java
+      package EeacDay;
+      
+      import java.util.*;
+      
+      public class M0707 {
+          public static void main(String[] args) {
+              M0707 so = new M0707();
+      //        int[][] events = new int[][]{{1,2},{1,2},{3,3},{1,5},{1,5}};
+      //        int[][] events = new int[][]{{1,3},{1,3},{1,3},{3,4}};
+              int[][] events = new int[][]{{1,4},{4,4},{2,2},{3,4},{1,1}};
+              int ans = so.maxEvents(events);
+              System.out.println(ans);
+          }
+      
+          public int maxEvents(int[][] events) {
+              int curDay = 1;
+              int meetIndex = 0;
+              int cou = 0;
+              Arrays.sort(events, new Comparator<int[]>() {
+                  @Override
+                  public int compare(int[] o1, int[] o2) {
+                      return o1[0]-o2[0];
+                  }
+              });
+              PriorityQueue<int[]> que = new PriorityQueue<>(new Comparator<int[]>() {
+                  @Override
+                  public int compare(int[] o1, int[] o2) {
+                      return o1[1]-o2[1];
+                  }
+              });
+      
+              while(meetIndex<events.length || !que.isEmpty()){ //第2个条件 !que.isEmpty() 也是非常重要的
+      
+                  while(meetIndex<events.length && events[meetIndex][0]==curDay){
+                      que.add(events[meetIndex]);
+                      meetIndex++; //** 注意 meetIndex 只有这里自增加
+                  }
+      
+                  //剔除无效会议，结束时间《 curDay的会议，因为有些会议是无法安排的
+                  while(!que.isEmpty() && que.peek()[1]<curDay){
+                      que.poll();
+                  }
+                  //选择一个结束时间最早的会议
+                  if(!que.isEmpty()){ //if 不是 while...一天只能安排一个
+                      que.poll();
+                      cou++;
+                  }
+                  curDay++;
+      
+              }
+              return cou;
+          }
+      
+      }
+      ````
+
+       

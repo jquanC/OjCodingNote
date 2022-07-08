@@ -42,7 +42,7 @@ public class Main2 {
         int col = g[0].length-1;
         if(curX<0 || curY <0 ||curX>row||curY>col) return;
         if(g[curX][curY]==1) return;
-        String point = String.valueOf(curX)+String.valueOf(curY);
+        String point = String.valueOf(curX)+String.valueOf(curY);//其实这么做不严谨(12,1) 和（1，21）是两个坐标，在这里变成1个了
         if(path.contains(point)) return;
 
         //判断是否到终点
