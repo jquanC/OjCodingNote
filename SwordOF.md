@@ -5512,13 +5512,13 @@ public class SchemeNum {
 
 #　每日一题
 
-## [20. 有效的括号](https://leetcode.cn/problems/valid-parentheses/)
+### [20. 有效的括号](https://leetcode.cn/problems/valid-parentheses/)
 
 ![image-20220703211640776](SwordOF.assets/image-20220703211640776.png)
 
 
 
-## **[1353. 最多可以参加的会议数目](https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended/)
+### **[1353. 最多可以参加的会议数目](https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended/)
 
 - 花了很多时间的一题
 
@@ -5609,3 +5609,156 @@ public class SchemeNum {
       ````
 
        
+      
+
+### [134. 加油站](https://leetcode.cn/problems/gas-station/)
+
+两个难点
+
+- 如何思考 O（n）的解法，以及正确性
+- 代码中，i 指向 index ，为什么要保证index >i
+
+````java
+class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        
+        int n = gas.length;//0,1,2,...,n-1
+        int pos = -1;
+        boolean find = false;
+        for(int i=0; i<gas.length && !find;i++){
+            int index = i;
+            int oril = gas[index];
+            while(oril>=cost[index]){ 
+                oril -= cost[index];
+                index++;
+                index %= n ; 
+                oril+=gas[index];
+                if(index == i){
+                    find = true;
+                    pos = i;
+                    break;
+                }
+            }
+            //要保证起点i是递增的---挺隐蔽的
+            //不然是-1的情况，因为index会求余，程序死循环
+            if(index>i){
+                i = index;
+            }
+
+        }
+        return pos;
+
+    }
+}
+````
+
+
+
+### *[440. 字典序的第K小数字](https://leetcode.cn/problems/k-th-smallest-in-lexicographical-order/)(hard)
+
+- 先序遍历第k个数
+- 编号 
+
+````text
+给定整数 n 和 k，返回  [1, n] 中字典序第 k 小的数字。
+
+ 
+
+示例 1:
+
+输入: n = 13, k = 2
+输出: 10
+解释: 字典序的排列是 [1, 10, 11, 12, 13, 2, 3, 4, 5, 6, 7, 8, 9]，所以第二小的数字是 10。
+示例 2:
+
+输入: n = 1, k = 1
+输出: 1
+ 
+
+提示:
+
+1 <= k <= n <= 109
+
+````
+
+````java
+class Solution {
+    public int findKthNumber(int n, int k) {
+        int curr = 1;//从1开始，1是字典序最小的
+        k--;//如果k=1，则不进入下面的循环，直接返回1，否则说明1不是目标，找第k-1个小的数
+        while (k > 0) {
+            int steps = count(curr, n);//steps=当前节点curr下有多少比n小的子节点(包括n)
+            if (steps <= k) {//不够，需要去邻近节点找
+                curr++;//+1意味着到达了邻近兄弟节点
+                k = k - steps;
+                //意味着前面的steps个数包含在在curr节点下，接下来进入兄弟节点找第k-steps小的数
+            } else {//否则，在curr下
+                k--;//减去当前节点
+                curr = curr * 10;//从最左侧开始搜寻
+            }
+        }
+        return curr;
+    }
+
+        public static int count(int curr, int n) {//计算节点curr下有多少比n小的子节点
+        int steps = 0;
+        long first = curr;
+        long last = curr;
+        while (first <= n) {//当前层有符合要求的节点
+            steps += Math.min(last, n) - first + 1;//汇入
+            first = first * 10;//进入到下一层
+            last = last * 10 + 9;//进入到下一层
+        }
+        return steps;
+    }
+}
+````
+
+
+
+## 动态规划
+
+### [375. 猜数字大小 II](https://leetcode.cn/problems/guess-number-higher-or-lower-ii/)
+
+````text
+我们正在玩一个猜数游戏，游戏规则如下：
+
+我从 1 到 n 之间选择一个数字。
+你来猜我选了哪个数字。
+如果你猜到正确的数字，就会 赢得游戏 。
+如果你猜错了，那么我会告诉你，我选的数字比你的 更大或者更小 ，并且你需要继续猜数。
+每当你猜了数字 x 并且猜错了的时候，你需要支付金额为 x 的现金。如果你花光了钱，就会 输掉游戏 。
+给你一个特定的数字 n ，返回能够 确保你获胜 的最小现金数，不管我选择那个数字 。
+
+
+````
+
+````java
+class Solution {
+  //f[i,j] = min{ x+ max{f[i,x-1] , f[x+1,j]} },最外面
+  //ans[i][j] = min{ t+max{ ans[i][t-1]+ans[t][j]}}
+  //ans[i][j] = 0 , if i=j
+    public int getMoneyAmount(int n) {
+        int[][] ans = new int[n+1][n+1];
+        //初始化
+        for(int i=1;i<=n-1;i++){
+                ans[i][i+1] = i;
+        }
+       
+        for(int len=2;len<=n-1;len++){
+            for(int i=1;i+len<=n;i++){ //[i,i+len]
+                int  c = 0;
+                int res = 0x3f3f3f3f;
+                for(int j=i+1;j<=i+len-1;j++){
+                    c = j+Math.max(ans[i][j-1],ans[j+1][i+len]);
+                    if(c<res) res = c;
+                }
+                ans[i][i+len] = res;
+            }
+        }
+        return ans[1][n];
+        
+    }
+}
+````
+
