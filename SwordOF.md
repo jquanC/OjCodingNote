@@ -1664,7 +1664,7 @@ if (vis[j] || (j > 0 && !vis[j - 1] && s[j - 1] == s[j])) {
 **扩展和联系：**
 
 - 二叉搜索树
-- 二叉树\普通树
+- 二叉树\普通树（方法1-转链表 方法2-递归巧判断）[236. 二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)
   - 有指向父节点的指针
   - 没有指向父节点的指针
 
@@ -1768,6 +1768,32 @@ public void test(){
     }
 }
 
+````
+
+````java
+class Solution {
+    TreeNode ans ;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        contains(root,p,q);
+        return ans;
+        
+        
+    }
+    //root下面包含p或q， 返回true
+    public boolean contains(TreeNode root,TreeNode p,TreeNode q){
+        if(root == null) return false;
+
+        boolean lson = contains(root.left,p,q);
+        boolean rson = contains(root.right,p,q);
+        //满足条件，意味找到了解
+        if( (lson && rson) ||  ( (root.val==p.val ||root.val == q.val))&&(lson||rson) ){
+            ans = root;
+        }
+        return lson||rson || root.val==p.val || root.val == q.val;
+        
+
+    }
+}
 ````
 
 
@@ -3362,6 +3388,54 @@ public class IsMatch {
     }
 }
 
+````
+
+//再一次
+
+````java
+class Solution {
+    /**
+    boolean f[i,j] 表示 s前i个字符 和 p前j个字符是否匹配
+    when p(j) !='*'
+        when p(j) no match s(i),  f[i,j] = false
+        when p(j) match s(i) f[i,j] = f[i-1,j-1]
+    when p(j) == '*'
+        f[i,j] = f[i,j-2] || f[i-1,j]  
+
+     */
+    public boolean isMatch(String s, String p) {
+        boolean f[][] = new boolean [s.length()+1][p.length()+1];
+        f[0][0] = true;
+        //状态一个都不能少
+        for(int j=1;j<=p.length();j++){
+            if(p.charAt(j-1)!='*') f[0][j] = false;
+            else{
+                if(j-2>=0) f[0][j] = f[0][j-2];
+                else f[0][j] = false;
+            } 
+        }
+        
+
+        for(int i=1;i<=s.length();i++){
+            for(int j=1;j<=p.length();j++){
+                if(p.charAt(j-1)!='*'){
+                    if(p.charAt(j-1) == s.charAt(i-1)|| p.charAt(j-1)=='.'){
+                        f[i][j] = f[i-1][j-1];
+                    }else f[i][j] = false;
+                }else{
+                    if(s.charAt(i-1)==p.charAt(j-2) || p.charAt(j-2)=='.') f[i][j] = f[i][j-2] || f[i-1][j];
+                    else f[i][j] = f[i][j-2];
+                }
+
+            }
+        }
+        return f[s.length()][p.length()];
+        
+    }
+
+     
+
+}
 ````
 
 
@@ -5716,9 +5790,231 @@ class Solution {
 
 
 
+### [417. 太平洋大西洋水流问题](https://leetcode.cn/problems/pacific-atlantic-water-flow/)
+
+````java
+class Solution {
+    public static int[] drow = new int[]{1,0,-1,0};
+    public static int[] dcol = new int[]{0,1,0,-1};
+    public static int[][] heights;
+    public static boolean[][] pacific;//could reach pacific
+    public static boolean[][] atlantic;
+    public static int m,n;
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+        this.heights = heights;
+        m = heights.length;
+        n = heights[0].length;
+        pacific = new boolean[m][n];
+        atlantic = new boolean[m][n];
+        for(int i=0;i<m;i++){
+            dfs(i,0,pacific);
+        }
+        for(int j=0;j<n;j++){
+            dfs(0,j,pacific);
+        }
+         for(int i=0;i<m;i++){
+            dfs(i,n-1,atlantic);
+        }
+        for(int j=0;j<n;j++){
+            dfs(m-1,j,atlantic);
+        }
+        List<List<Integer>> ans = new ArrayList<List<Integer>>();
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(pacific[i][j] && atlantic[i][j]){
+                    List<Integer> oneAns = new ArrayList();
+                    oneAns.add(i);
+                    oneAns.add(j);
+                    ans.add(oneAns);
+                }
+            }
+        }
+        return ans;
+    
+   
+    }
+    public void dfs(int row,int col,boolean[][]ocean){
+        if(ocean[row][col]) return ;
+        ocean[row][col] = true;
+
+        for(int k=0;k<4;k++){
+            int nr = row+drow[k];
+            int nc = col+dcol[k];
+            if(nr>=0 && nr<m && nc>=0 && nc<n && heights[nr][nc]>= heights[row][col]) dfs(nr,nc,ocean);//逆向流动搜索！
+        }
+           
+    }
+
+
+   
+}
+````
+
+### *[56. 合并区间](https://leetcode.cn/problems/merge-intervals/)
+
+- 好题
+- 做过类似的；一样的味道
+
+这道题，如果题目合并区间，不是要求重叠才可以合并，可以用差分数组
+
+````java
+class Solution {
+    //区间和:
+    //读一个区间，就是区间加1
+    //最后区间段不为0的，就是有效区间
+    //坑点 要重叠才行，不是数学意义上的合并[1,2][3,4] 不行
+    
+    public int[][] merge(int[][] intervals) {
+        
+        int len = 0;
+        int min = 0x3f3f3f3f;
+        for(int i =0;i<intervals.length;i++){
+            if(intervals[i][1]>len) len = intervals[i][1];
+            if(intervals[i][0]<min) min = intervals[i][0];
+            
+        }
+        int[] disArr = new int[len+2];
+        if(min ==0) disArr[0] = 1;
+        else disArr[0] = 0;
+
+        for(int i =0;i<intervals.length;i++){
+            int l = intervals[i][0];
+            int r = intervals[i][1];
+            disArr[l] +=1 ;
+            disArr[r+1] -= 1;
+        }
+        int sum = disArr[0];
+        int validL = -1;
+        int validR = -1;
+        if(sum >0) validL = 0 ; 
+        List<int[]> ans = new ArrayList();
+        for(int i=1;i<disArr.length;i++){
+            sum +=disArr[i]; //sum 是实际当前元素值，大于0说明这是一个采纳的区间
+            if(sum >0 && validL == -1){ //记录合理左区间
+                validL = i;
+            }
+            if(sum == 0 && validL >=0){ //记录合理右区间，同时找到一组解
+                validR = i-1;
+                ans.add(new int[]{validL,validR});
+                validL = -1;
+            }
+        }
+        if(validL>=0 && sum >0)  ans.add(new int[]{validL,len});
+        int[][] res = new int[ans.size()][2];
+        for(int i=0;i<ans.size();i++){
+            res[i] = ans.get(i);
+        }
+        return res;
+    }
+}
+````
+
+本地解法：排序，最关键是理解为什么 第二个元素乱序对结果没有影响
+
+````java
+class Solution {
+    //区间和:
+    //读一个区间，就是区间加1
+    //最后区间段不为0的，就是有效区间
+    //坑点 要重叠才行，不是数学意义上的合并[1,2][3,4] 不行
+    
+    public int[][] merge(int[][] intervals) {
+       Arrays.sort(intervals,new Comparator<int[]>(){
+           public int compare(int[] o1,int[] o2){
+               return o1[0]-o2[0];
+           }
+       });
+       
+       List<int[]> ans = new ArrayList();
+       for(int i = 0;i<intervals.length;i++){
+           int L = intervals[i][0];
+           int R = intervals[i][1];
+           if(ans.size() ==0 || ans.get(ans.size()-1)[1]<L){
+               ans.add(new int[]{L,R});
+           }else{
+               ans.get(ans.size()-1)[1] = Math.max(ans.get(ans.size()-1)[1],R);
+           }
+       }
+       int[][] res =  new int[ans.size()][];
+       for(int i =0;i<ans.size();i++) res[i] = ans.get(i);
+       return res;
+    }
+}
+````
+
+
+
+### [300. 最长递增子序列](https://leetcode.cn/problems/longest-increasing-subsequence/)
+
+- 好题
+- $O(nlog n )二分查找的2种实现，见‘算法’.md$
+
+
+
+## 并查集
+
+### [765. 情侣牵手](https://leetcode.cn/problems/couples-holding-hands/)
+
+````java
+class Solution {
+    public int minSwapsCouples(int[] row) {
+        int n = row.length/2;
+        UnionFind uf =  new UnionFind(n);
+        for(int i=0;i<row.length;i+=2){
+            uf.union(row[i]/2,row[i+1]/2);
+        }
+        return n - uf.getCount();
+       
+    }
+
+    class UnionFind{
+        int[] parent;
+        int count;
+        public UnionFind(int n){
+            this.count = n;
+            parent = new int[n];
+            for(int i=0;i<parent.length;i++) parent[i] = i;
+
+        }
+        public int getCount(){ return count;}
+
+   
+        //也叫find method 
+        public int find(int x){
+           if(parent[x]!=x){
+               int t = find(parent[x]);
+               parent[x] = t;
+               return t;
+           }else return parent[x];
+        }
+
+    
+
+        public void union(int x,int y){
+            int rx = find(x);
+            int ry = find(y);
+            if(rx == ry) return;
+            else parent[ry] = rx; 
+            
+            count--;
+        }
+            
+        
+    }
+}
+````
+
+
+
+
+
+
+
 ## 动态规划
 
 ### [375. 猜数字大小 II](https://leetcode.cn/problems/guess-number-higher-or-lower-ii/)
+
+想不起来可以看下题解视频
 
 ````text
 我们正在玩一个猜数游戏，游戏规则如下：
@@ -5761,4 +6057,6 @@ class Solution {
     }
 }
 ````
+
+
 
