@@ -4221,7 +4221,7 @@ class Solution {
 例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
 ````
 
-- 推导出每一数位1出现的次数计算公式
+- 推导出每一数位1出现的次数计算公式 
 
 ![image-20211228224102585](mdPics/image-20211228224102585.png)
 
@@ -6058,5 +6058,348 @@ class Solution {
 }
 ````
 
+### [1262. 可被三整除的最大和](https://leetcode.cn/problems/greatest-sum-divisible-by-three/)(线性dp)
 
+````text
+给你一个整数数组 nums，请你找出并返回能被三整除的元素最大和。
+
+ 
+
+示例 1：
+
+输入：nums = [3,6,5,1,8]
+输出：18
+解释：选出数字 3, 6, 1 和 8，它们的和是 18（可被 3 整除的最大和）。
+示例 2：
+
+输入：nums = [4]
+输出：0
+解释：4 不能被 3 整除，所以无法选出数字，返回 0。
+
+来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/greatest-sum-divisible-by-three
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+
+
+````java
+class Solution {
+    //%3: 0,1,2
+    public int maxSumDivThree(int[] nums) {
+        int len = nums.length;
+        int[][] dp = new int[len+1][3];
+        dp[0][1] = -0x3f3f3f;
+        dp[0][2] = -0x3f3f3f;
+        for(int i=1;i<=nums.length;i++){
+            if(nums[i-1]%3==0){
+                dp[i][0] = dp[i-1][0]+nums[i-1];
+                dp[i][1] = dp[i-1][1]+nums[i-1];
+                dp[i][2] = dp[i-1][2]+nums[i-1];
+            }else if(nums[i-1]%3==1){
+                dp[i][0] = Math.max(dp[i-1][0],dp[i-1][2]+nums[i-1]);
+                dp[i][1] = Math.max(dp[i-1][1],dp[i-1][0]+nums[i-1]);
+                dp[i][2] = Math.max(dp[i-1][2],dp[i-1][1]+nums[i-1]);
+            }else{
+                dp[i][0] = Math.max(dp[i-1][0],dp[i-1][1]+nums[i-1]);
+                dp[i][1] = Math.max(dp[i-1][1],dp[i-1][2]+nums[i-1]);
+                dp[i][2] = Math.max(dp[i-1][2],dp[i-1][0]+nums[i-1]);
+            }
+        }
+        return dp[len][0];
+
+    }
+}
+````
+
+
+
+
+
+
+
+## 单调栈/单调队列
+
+### [402. 移掉 K 位数字](https://leetcode.cn/problems/remove-k-digits/)
+
+````java
+给你一个以字符串表示的非负整数 num 和一个整数 k ，移除这个数中的 k 位数字，使得剩下的数字最小。请你以字符串形式返回这个最小的数字。
+
+ 
+示例 1 ：
+
+输入：num = "1432219", k = 3
+输出："1219"
+解释：移除掉三个数字 4, 3, 和 2 形成一个新的最小的数字 1219 。
+示例 2 ：
+
+输入：num = "10200", k = 1
+输出："200"
+解释：移掉首位的 1 剩下的数字为 200. 注意输出不能有任何前导零。
+
+来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/remove-k-digits
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+
+
+````java
+class Solution {
+    public String removeKdigits(String num, int k) {
+        Deque<Character> deque = new LinkedList<Character>();
+        int length = num.length();
+        for (int i = 0; i < length; ++i) {
+            char digit = num.charAt(i);
+            while (!deque.isEmpty() && k > 0 && deque.peekLast() > digit) {
+                deque.pollLast();
+                k--;
+            }
+            deque.offerLast(digit);
+        }
+        
+        for (int i = 0; i < k; ++i) {
+            deque.pollLast();
+        }
+        
+        StringBuilder ret = new StringBuilder();
+        boolean leadingZero = true;
+        while (!deque.isEmpty()) {
+            char digit = deque.pollFirst();
+            if (leadingZero && digit == '0') {
+                continue;
+            }
+            leadingZero = false;
+            ret.append(digit);
+        }
+        return ret.length() == 0 ? "0" : ret.toString();
+    }
+}
+````
+
+
+
+### *[456. 132 模式](https://leetcode.cn/problems/132-pattern/)
+
+非常有技巧的一道 单调栈 题目。好题
+
+````text
+给你一个整数数组 nums ，数组中共有 n 个整数。132 模式的子序列 由三个整数 nums[i]、nums[j] 和 nums[k] 组成，并同时满足：i < j < k 和 nums[i] < nums[k] < nums[j] 。
+
+如果 nums 中存在 132 模式的子序列 ，返回 true ；否则，返回 false 
+ 
+
+示例 1：
+
+输入：nums = [1,2,3,4]
+输出：false
+解释：序列中不存在 132 模式的子序列。
+示例 2：
+
+输入：nums = [3,1,4,2]
+输出：true
+解释：序列中有 1 个 132 模式的子序列： [1, 4, 2] 。
+示例 3：
+
+输入：nums = [-1,3,2,0]
+输出：true
+解释：序列中有 3 个 132 模式的的子序列：[-1, 3, 2]、[-1, 3, 0] 和 [-1, 2, 0] 。
+ 
+
+提示：
+
+n == nums.length
+1 <= n <= 2 * 105
+-109 <= nums[i] <= 109
+````
+
+````java
+class Solution {
+    public boolean find132pattern(int[] nums) {
+        
+        Deque<Integer> que = new LinkedList();
+        int max2Candidates = Integer.MIN_VALUE;
+        que.offer(nums[nums.length-1]);
+        //该策略从后往前是枚举1，同时维护2，3可能的取值
+        for(int i=nums.length-2;i>=0;i--){
+            if(nums[i]<max2Candidates){
+                return true;
+            }
+            while(!que.isEmpty() && nums[i]>que.peekLast()){
+                max2Candidates = que.pollLast();
+            }
+            if(nums[i]>max2Candidates){
+                que.offer(nums[i]);//比max大，就入队，意味它可能是 2 候选；因为再往前遇到比它大的元素，它就得从栈滚出来了，正式称为2候选
+            }
+        }
+        return false;
+
+    }
+}
+````
+
+
+
+## 字符串处理
+
+###　[336. 回文对](https://leetcode.cn/problems/palindrome-pairs/)
+
+字符串数目少，字符串长--暴力
+
+字符串数目多，字符串较短--本题方法
+
+分析，一个字符串分为
+
+- [ - - -  | ~ ]
+- [ ~ | - - - ]
+- [ - - - ] 部分自己是回文
+- [ ~ ] 部分 ，存在words[ i ] 的逆字符串和[ ~ ]相等
+
+````text
+给定一组 互不相同 的单词， 找出所有 不同 的索引对 (i, j)，使得列表中的两个单词， words[i] + words[j] ，可拼接成回文串。
+
+ 
+
+示例 1：
+
+输入：words = ["abcd","dcba","lls","s","sssll"]
+输出：[[0,1],[1,0],[3,2],[2,4]] 
+解释：可拼接成的回文串为 ["dcbaabcd","abcddcba","slls","llssssll"]
+示例 2：
+
+输入：words = ["bat","tab","cat"]
+输出：[[0,1],[1,0]] 
+解释：可拼接成的回文串为 ["battab","tabbat"]
+示例 3：
+
+输入：words = ["a",""]
+输出：[[0,1],[1,0]]
+
+来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/palindrome-pairs
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+````
+
+````java
+class Solution {
+    public List<List<Integer>> palindromePairs(String[] words) {
+        List<List<Integer>> ans = new ArrayList<List<Integer>>();
+        HashMap<String,Integer> revMap = new HashMap();
+        for(int i=0;i<words.length;i++){
+            revMap.put(new StringBuilder(words[i]).reverse().toString(),i);
+        }
+        for(int i=0;i<words.length;i++){
+            String word = words[i];
+            int len = word.length();
+            if(len == 0) continue;
+
+            for(int j=0;j<=len;j++){
+            
+                if(isHuiStr(word.substring(j,len))){
+                    int rightId = revMap.getOrDefault(word.substring(0,j),-1);
+                    if(rightId!=-1 && rightId !=i){
+                        ans.add(Arrays.asList(i,rightId));// learned
+                    }
+                }
+                if( j!=0 && isHuiStr(word.substring(0,j))){//j!=0 是必要的,否则可能重复解
+                   int leftId = revMap.getOrDefault(word.substring(j,len),-1);
+                   if(leftId != -1 && leftId!=i){
+                       ans.add(Arrays.asList(leftId,i));
+                   }
+
+                }
+            }
+        }
+        return ans;
+
+    }
+    public boolean isHuiStr(String str){
+        int left = 0;
+        int right = str.length()-1;
+        while(left<right){
+            if(str.charAt(left)!=str.charAt(right)){
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+  
+}
+````
+
+
+
+# 技巧题目
+
+## [剑指 Offer II 010. 和为 k 的子数组O(n)解法](https://leetcode.cn/problems/QTMn0o/)
+
+````text
+给定一个整数数组和一个整数 k ，请找到该数组中和为 k 的连续子数组的个数。
+示例 1：
+输入:nums = [1,1,1], k = 2
+输出: 2
+解释: 此题 [1,1] 与 [1,1] 为两种不同的情况
+示例 2：
+
+输入:nums = [1,2,3], k = 3
+输出: 2
+ 
+提示:
+1 <= nums.length <= 2 * 104
+-1000 <= nums[i] <= 1000
+-107 <= k <= 107
+
+````
+
+
+
+算法思想：
+
+用 $cou[i]$ 表示以 $nums[i]$结尾的区间和为k的区间的数量。那么整个原问题分解为N个子问题。N是数组长度。
+
+通过数学关系：
+$$
+\begin{align}
+\sum_{j}^{i}nums[t]=k\tag{1} \\
+\sum_{0}^{i}nums[t]=preSum\tag{2}\\
+\end{align}
+$$
+可以得到： $ \sum_{0}^{j-1}nums[t] = preSum-k  $  这一关系。  $cou[i] $ 的值表示满足这个关系的前缀和区间的个数。
+
+不难发现，对于preSum-k是确定的，只需要可以 $O(1)$ 求解满足 $\sum_{0}^{j-1}nums[t]$ 的区间个数，那么求解整个问题的时间复杂度为$O(n)$
+
+不难发现，$\sum_{0}^{j-1}nums[t]$  的数学含义即在此元素之前，所求解的过的数组前缀和。我们可以用哈希表记录: Map<区间前缀和，个数>
+
+
+
+细节：为什么要初始化$map<0,1>?$
+
+- 当$\sum_{0}^{i}nums[i]=k$ 的时候，当然也是原问题的解。这是一个特殊情况，我们不需要再找前缀和和preSum-k 的数组了。
+
+另外，实际上求解过程中累加$cou[i]$即可，空间复杂度可以优化为 $O(1)$. 代码用 $cou$ 数组只是为了配合题解使表达更加直观。
+
+````java
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        HashMap<Integer,Integer> map = new HashMap();
+        int[] cou = new int[nums.length];
+        int ans = 0;
+        int preSum = 0;
+        map.put(0,1);
+        for(int i=0;i<nums.length;i++){
+            preSum+=nums[i];
+            if(map.containsKey(preSum-k)){
+                cou[i] = map.get(preSum-k);
+                ans+=cou[i];
+            }
+            map.put(preSum,map.getOrDefault(preSum,0)+1);
+        }
+        return ans;
+
+    }
+}
+````
 

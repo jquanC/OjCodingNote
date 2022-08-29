@@ -1,0 +1,58 @@
+
+import java.util.*;
+
+public class Main {
+    //第二行有n-1个空格隔开的数，
+    // 第i个数ai代表编号为i+1的新员工与编号为ai的员工互为朋友。
+    // 第1个数1代表编号为2的新员工与编号为1的员工互为朋友
+    //每个节点用list记录自己的朋友编号,list的size是节点的度--转无向图
+    //贪心先安排度小的
+    //用一个bool vis[] 记录每个人是否分配
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        sc.nextLine();
+        Per[] prr = new Per[n];
+        prr[0] = new Per(1);
+        for(int i=1;i<n;i++){
+            int cid = i+1;
+            int fid = sc.nextInt();
+            if(prr[cid-1]==null)  prr[i] = new Per(cid);
+            prr[i].friList.add(fid);
+            //转无向图
+            if(prr[fid-1]==null) prr[fid-1] = new Per(fid);
+            prr[fid-1].friList.add(cid);
+        }
+        sc.nextLine();
+        Arrays.sort(prr, new Comparator<Per>() {
+            @Override
+            public int compare(Per o1, Per o2) {
+                return o1.friList.size()-o2.friList.size();
+            }
+        });
+        boolean[] allocated = new boolean[n+1];
+        int ans = 0;
+        for(int i=0;i<n;i++){
+            ArrayList<Integer> curFs = prr[i].friList;
+            for(Integer e:curFs){
+                if(!allocated[e] && !allocated[prr[i].id]){//别忘了自己要也标记使用
+                    allocated[e] = true;
+                    allocated[prr[i].id] = true;//别忘了自己要也标记使用
+                    ans++;
+                    break;
+                }
+            }
+        }
+        System.out.println(ans);
+
+
+    }
+}
+class Per{
+    int id;
+    ArrayList<Integer> friList;//树保证了不需要去重
+    public Per(int id){
+        this.id = id;
+        friList = new ArrayList();
+    }
+}

@@ -5,9 +5,17 @@ import org.junit.Test;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Random;
 
 
 public class ABigTest {
+    @Test
+    public void test20220810(){
+        Random random = new Random(1997);
+        int luckNum = random.nextInt(1997);
+        luckNum %=2 ;
+        System.out.println(luckNum);
+    }
     @Test
     public void test01() throws NoSuchFieldException, IllegalAccessException {
         String a = "aaa";
