@@ -1,0 +1,38 @@
+作者：反正我除啦菜啥都没有
+链接：https://www.nowcoder.com/discuss/1055106?type=all&order=recall&pos=&page=1&ncTraceId=&channel=-1&source_id=search_all_nctrack
+来源：牛客网
+note: 递归的解法并不比非递归迭代慢。但是代码更清晰。 如果在时间复杂度上没有区别，其实递归是更好的解法
+
+bool finded;
+string ans;
+void dfs(int first, int value, string& str) {
+    if (finded) return;
+    if (first == str.size()) {
+        if (value % 3 == 0) {
+            finded = true;
+            ans = str;
+        }
+        return;
+    }
+    if (str[first] != '?') {
+        if (first > 0 && str[first] == str[first - 1]) return;
+        dfs(first + 1, value + (str[first] - '0'), str);
+    }
+    else {
+        for (char ch = '0'; ch <= '9'; ++ch) {
+            if (first == 0 && ch == '0') continue;
+            if (first > 1 && ch == str[first - 1]) continue;
+            str[first] = ch;
+            dfs(first + 1, value + str[first] - '0', str);
+        }
+    }
+}
+void solve() {
+    string str; cin >>  str;
+    if (str.size() == 1) {
+        cout << 3 << endl;
+        return;
+    }
+    dfs(0, 0, str);
+    cout << ans << endl;
+}

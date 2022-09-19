@@ -5578,11 +5578,21 @@ public class SchemeNum {
 
 
 
-# 树状DP
+# DP
+
+##树状DP
 
 面试真题-美团-蚂蚁上树
 
 
+
+## 逆向DP
+
+![Snipaste_2022-07-23_20-58-36](SwordOF.assets/Snipaste_2022-07-23_20-58-36.png)
+
+![image-20220726200749317](SwordOF.assets/image-20220726200749317.png)
+
+![image-20220726200801660](SwordOF.assets/image-20220726200801660.png)
 
 #　每日一题
 
@@ -6398,6 +6408,83 @@ class Solution {
             map.put(preSum,map.getOrDefault(preSum,0)+1);
         }
         return ans;
+
+    }
+}
+````
+
+
+
+# 贪心
+
+## 可反悔贪心
+### 猫猫选数
+给出n个整数，没个数可能是正的也可能是负的。**要求选的过程中**，所选择数的总和>=0。求最多可以选择多少个数。
+
+（字节9月题）
+
+用一个优先队列存储所有选择的负数，并且是小顶堆，用于可反悔贪心。
+
+- 当curNum>==0, sum+=curNum, cou++;
+
+- curNum<0:
+
+  - if sum+curNum >=0: sum+=curNum, cou++, que.offer(curNum) //贪心的加
+
+  - que.peek() < curNum: sum - = que.poll(), sum+=curNum ; cou不变 // 可反悔的贪心
+
+### 徒步
+
+![image-20220726200353802](SwordOF.assets/image-20220726200353802.png)
+
+![image-20220726200405188](SwordOF.assets/image-20220726200405188.png)
+
+![image-20220726200602282](SwordOF.assets/image-20220726200602282.png)
+
+![image-20220726200843307](SwordOF.assets/image-20220726200843307.png)
+
+  ### 优惠券专家
+
+
+
+![image-20220621201601247](SwordOF.assets/image-20220621201601247.png)
+
+![image-20220621201739911](SwordOF.assets/image-20220621201739911.png)
+
+![image-20220623104502069](SwordOF.assets/image-20220623104502069.png)
+
+
+
+# 二分
+
+##  细节[278. 第一个错误的版本](https://leetcode.cn/problems/first-bad-version/)
+
+用 int mid = left +(right - left)/2 ; 而不用 mid = (left + rigt)/2
+
+可以避免left, right 都是int 类型时可能的溢出
+
+````java
+/* The isBadVersion API is defined in the parent class VersionControl.
+      boolean isBadVersion(int version); */
+
+public class Solution extends VersionControl {
+    //实际上是最优二分 查找的思路 TTTT FFFFF
+    public int firstBadVersion(int n) {
+        if(n==1) return 1;
+        return find(1,n);
+
+    }
+    public int find(int left,int right){
+       // int mid = (left+right)/2;
+        int mid =  left+(right-left)/2;
+        if(left == right) return left;
+       
+        if(!isBadVersion(mid)){//必然往右
+            return find(mid+1,right);
+        }
+        // is bad version (3-T,4-F,5-F)
+        return find(left,mid);
+       
 
     }
 }
