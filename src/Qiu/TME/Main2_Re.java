@@ -48,7 +48,6 @@ public class Main2_Re {
         int l = 1;
         int r = cou.length-1;
 
-
         while(l<r){ //还要分有解 没解的情况
             int mid = l+(r-l)/2;
             if(cou[mid]>=x){

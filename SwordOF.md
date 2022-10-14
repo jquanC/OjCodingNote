@@ -5961,6 +5961,63 @@ class Solution {
 
 
 
+### [135. 分发糖果](https://leetcode.cn/problems/candy/)
+
+````text
+n 个孩子站成一排。给你一个整数数组 ratings 表示每个孩子的评分。
+
+你需要按照以下要求，给这些孩子分发糖果：
+
+每个孩子至少分配到 1 个糖果。
+相邻两个孩子评分更高的孩子会获得更多的糖果。//小心这个条件
+请你给每个孩子分发糖果，计算并返回需要准备的 最少糖果数目 。
+
+
+````
+
+
+
+````java
+class Solution {
+    //ratings: 3 4 5 5 5 4 3
+    //的分配是：1 2 3 1 3 2 1 
+
+     //ratings: 3 4 5 5 5 4 3 2 1
+    //的分配是： 1 2 3 1 5 4 3 2 1
+
+    //ratings: 3 4 5 4 3 2 1
+    //的分配是：1 2 5 4 3 2 1
+
+    public int candy(int[] ratings) {
+      int cou=1;
+      int pre = 1;
+      int inc = 1;
+      int desc = 0;
+      for(int i=1;i<ratings.length;i++){
+          if(ratings[i]>=ratings[i-1]){
+              desc = 0;
+             
+              pre = ratings[i]==ratings[i-1] ? 1 : pre+1;
+              inc = pre;
+              cou +=pre;
+          }else{
+              desc++;
+              if(desc == inc){//同时注意当当前的递减序列长度和上一个递增序列等长时，需要把最近的递增序列的最后一个同学也并进递减序列中
+                  desc++;
+              }
+              cou += desc;
+              pre = 1;
+          }
+      }
+      return cou;
+    }
+}
+````
+
+
+
+
+
 ## 并查集
 
 ### [765. 情侣牵手](https://leetcode.cn/problems/couples-holding-hands/)

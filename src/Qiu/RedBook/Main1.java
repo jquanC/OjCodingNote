@@ -1,4 +1,4 @@
-package RedBook;
+package Qiu.RedBook;
 
 import java.util.Arrays;
 import java.util.Comparator;

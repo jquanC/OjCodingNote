@@ -1,4 +1,4 @@
-package RedBook;
+package Qiu.RedBook;
 /**
  * 某公司正在组织新员工团建，其中一项活动是两两配对进行石头剪刀布。
  *
