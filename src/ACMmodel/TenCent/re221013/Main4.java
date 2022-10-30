@@ -13,7 +13,7 @@ public class Main4 {
      转移方程：dp[i][j] = max{dp[i-1][j], dp[i-1][j-1]-num[i],dp[i-1][j+1]+num[i]}
      边界条件：dp[0][1-j] = M-num[0]*j
      */
-    public int calMaxProfit(int[] nums,int m){
+  /*  public int calMaxProfit(int[] nums,int m){
         int n = nums.length;
         int[][] dp = new int[n][n];
         for(int i=0;i*nums[0]<=m;i++){
@@ -21,9 +21,9 @@ public class Main4 {
         }
         for(int i=1;i<n;i++){
             for(int j=0;j*nums[i]<m;j++){
-                
+
             }
         }
 
-    }
+    }*/
 }
