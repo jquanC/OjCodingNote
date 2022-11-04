@@ -6419,6 +6419,77 @@ class Solution {
 
 
 
+## 综合
+
+这道题最大的价值就是绕。如果定义使用数据结果，如何加速；
+
+### [621. 任务调度器](https://leetcode.cn/problems/task-scheduler/)
+
+````java
+//方法一
+//优先安排数量多的任务，可以用优先队列来存储当前任务，排序优先级使用 数量
+    //先用map来统计
+    //优先选择不需要等待的任务，如果无任务可选，则cpu当前时间只能等待 (这个过程需要遍历优先队列)
+
+//方法二
+class Solution {
+    
+
+    public int leastInterval(char[] tasks, int n) {
+        HashMap<Character,Integer> freq = new HashMap();//用于统计
+
+        for(int i=0;i<tasks.length;i++){
+            freq.put(tasks[i],freq.getOrDefault(tasks[i],0)+1);
+        }
+        //因为后面需要遍历，而HashMap遍历不方便
+        Set<Character> keys = freq.keySet();
+        int m = keys.size();
+        int[] taskNums = new int[m];
+        int[] nextValid = new int[m];
+
+        int j=0;
+        for(Character e:keys){
+            taskNums[j] = freq.get(e);
+            nextValid[j] = 1;
+            j++;
+        }
+        int time = 0;
+        
+        while(true){
+            time++;
+            int nextMinValid = Integer.MAX_VALUE;
+            //此轮为了直接求下一个最小合法时间，监视while循环次数
+            for(int i=0;i<m;i++){
+                if(taskNums[i]!=0) nextMinValid = Math.min(nextMinValid,nextValid[i]);
+            }
+            if(nextMinValid == Integer.MAX_VALUE){
+                time--;
+                break;
+            }
+
+            time = Math.max(time,nextMinValid);
+
+            //选择剩余任务数最多的可执行任务
+            int selected = -1;
+            for(int i=0;i<m;i++){
+                if(nextValid[i]<=time && taskNums[i]!=0){
+                    if(selected==-1 || taskNums[i]>taskNums[selected])
+                    selected = i;
+                }
+            }
+            if(selected !=-1){
+                taskNums[selected]--;
+                nextValid[selected] = time+n+1;
+            }
+        }
+        return time;    
+
+    }
+}
+````
+
+
+
 # 技巧题目
 
 ## [剑指 Offer II 010. 和为 k 的子数组O(n)解法](https://leetcode.cn/problems/QTMn0o/)
